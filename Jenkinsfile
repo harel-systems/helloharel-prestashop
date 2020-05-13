@@ -42,7 +42,7 @@ pipeline {
             }
         }
         
-        stage('PHP Linting') {
+        stage('JSON Linting') {
             steps {
                 sh "find . -name '*.json' -exec jsonlint-php {} +"
             }
