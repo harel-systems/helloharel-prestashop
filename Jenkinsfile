@@ -68,5 +68,4 @@ echo -e "-rename vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel vho
             sh "test -z \"${PHID}\" || echo '{\"buildTargetPHID\":\"$PHID\",\"type\":\"pass\"}' | arc call-conduit --conduit-uri https://phabricator.harelsystems.io/api/ harbormaster.sendmessage"
         }
     }
-
 }
