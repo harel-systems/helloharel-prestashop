@@ -96,10 +96,12 @@ class HelloHarel extends Module
             Configuration::updateValue('HH_API_KEY', $apiKey->id);
             
             $permissions = array(
+                'categories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'customers' => array('POST' => 1),
                 'helloharel' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'products' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'customers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'languages' => array('GET' => 1),
                 'orders' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'products' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
             );
             
             WebserviceKey::setPermissionForAccount($apiKey->id, $permissions);
@@ -116,7 +118,7 @@ class HelloHarel extends Module
         $instanceKey = Tools::getValue('HH_INSTANCE_URL', Configuration::get('HH_INSTANCE_KEY'));
         
         if($instanceUrl) {
-            $output .= '<div class="alert alert-success">' . $this->getTranslator()->trans('Your module is now integrated with %url%.', array('%url%' => $instanceUrl), 'Modules.HelloHarel.Admin') . '</div>';
+            $output .= '<div class="alert alert-success"><strong>Congratulations!</strong> ' . $this->getTranslator()->trans('Your module is now integrated with <a href="%url%" target="_blank">%url%</a>.', array('%url%' => $instanceUrl), 'Modules.HelloHarel.Admin') . '</div>';
         } else {
             $output .= '
                 <div class="alert alert-success"><strong>Congratulations!</strong> You are only one last step away from integrating Hello Harel into PrestaShop.</div>
@@ -167,17 +169,6 @@ class HelloHarel extends Module
                 });
                 </script>
             ';
-        }
-
-        if(Tools::isSubmit('submit'.$this->name)) {
-            $instanceUrl = strval(Tools::getValue('HH_INSTANCE_URL'));
-
-            if(!$instanceUrl || empty($instanceUrl) || !Validate::isUrl($instanceUrl)) {
-                $output .= $this->displayError($this->l('Invalid Configuration value'));
-            } else {
-                Configuration::updateValue('HH_INSTANCE_URL', $instanceUrl);
-                $output .= $this->displayConfirmation($this->l('Settings updated'));
-            }
         }
 
         return $output;

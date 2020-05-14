@@ -30,6 +30,12 @@ pipeline {
             }
         }
         
+        stage('Composer') {
+            steps {
+                sh "composer dump-autoload"
+            }
+        }
+        
         stage('PHP Linting') {
             steps {
                 sh "find . -name '*.php' -exec php -l {} +"
