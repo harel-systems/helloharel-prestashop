@@ -51,7 +51,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh """
-echo -e "-rename vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel_old\nmkdir vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel\nput -r ./* vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel\n-rmdir vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel_old" | sftp 2132118@sftp.sd3.gpaas.net
+cat <<EOF | sftp 2132118@sftp.sd3.gpaas.net
+-rename vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel_old
+mkdir vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel
+put -r ./* vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel
+-rmdir vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel_old
+EOF
                 """
             }
         }
