@@ -7,7 +7,7 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '20', daysToKeepStr: '30', artifactDaysToKeepStr:'30'))
     }
-/*    
+    
     parameters {
         string(
             name: 'PHID',
@@ -15,7 +15,7 @@ pipeline {
             description: 'Phabricator PHID'
         )
     }
-*/
+    
     stages {
         stage('Clean Workspace') {
             steps {
@@ -56,7 +56,7 @@ echo -e "-rename vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel vho
             }
         }
     }
-/*    
+    
     post {
         success {
             sh "test -z \"${PHID}\" || echo '{\"buildTargetPHID\":\"$PHID\",\"type\":\"pass\"}' | arc call-conduit --conduit-uri https://phabricator.harelsystems.io/api/ harbormaster.sendmessage"
@@ -68,5 +68,4 @@ echo -e "-rename vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel vho
             sh "test -z \"${PHID}\" || echo '{\"buildTargetPHID\":\"$PHID\",\"type\":\"pass\"}' | arc call-conduit --conduit-uri https://phabricator.harelsystems.io/api/ harbormaster.sendmessage"
         }
     }
-*/
 }
