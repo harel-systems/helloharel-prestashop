@@ -47,31 +47,33 @@ class HelloHarel extends Module
             'max' => _PS_VERSION_,
         );
     }
-
-    /**
-     * This function is required in order to make module compatible with new translation system.
-     *
-     * @return bool
-     */
+    
     public function isUsingNewTranslationSystem()
     {
         return true;
     }
-
-    /**
-     * Install module and register hooks to allow grid modification.
-     *
-     * @see https://devdocs.prestashop.com/1.7/modules/concepts/hooks/use-hooks-on-modern-pages/
-     *
-     * @return bool
-     */
+    
     public function install()
     {
         return parent::install() &&
+            $this->installSql() &&
             Configuration::updateValue('PS_WEBSERVICE', 'true') &&
-            $this->registerHook('addWebserviceResources') &&
-            $this->registerHook('actionOrderStatusPostUpdate')
+            $this->registerHook([
+                'addWebserviceResources',
+                'actionValidateOrder',
+                'displayAdminProductsMainStepLeftColumnBottom',
+            ])
         ;
+    }
+    
+    protected function installSql()
+    {
+        return Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'product ADD helloharel TINYINT(1) NOT NULL');
+    }
+    
+    protected function uninstallSql()
+    {
+        return Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'product DROP helloharel');
     }
     
     public function hookAddWebserviceResources()
@@ -99,9 +101,12 @@ class HelloHarel extends Module
                 'categories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'customers' => array('POST' => 1),
                 'helloharel' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'images' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'image_types' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'languages' => array('GET' => 1),
                 'orders' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'products' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'tax_rule_groups' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
             );
             
             WebserviceKey::setPermissionForAccount($apiKey->id, $permissions);
@@ -178,6 +183,7 @@ class HelloHarel extends Module
     public function uninstall()
     {
         return $this->deleteWebserviceKey() &&
+            $this->uninstallSql() &&
             parent::uninstall();
     }
     
@@ -202,5 +208,47 @@ class HelloHarel extends Module
     {
         $order = $params['id_order'];
         
+    }
+
+    /**
+     * @param array $params = array(
+     *
+     * )
+     */
+    public function hookDisplayAdminProductsMainStepLeftColumnBottom(array $params)
+    {
+        $instanceUrl = Configuration::get('HH_INSTANCE_URL');
+        $product = new Product($params['id_product']);
+        
+        if($instanceUrl && $product->helloharel) {
+            return "
+            <div class=\"alert alert-info\">" . $this->getTranslator()->trans('This product is managed by Hello Harel. <a href="%url%" class="btn btn-primary float-right"><i class=\"material-icons\">edit</i> Edit on Hello Harel</a>', array('%url%' => $instanceUrl . '/products/products/by_reference/' . $params['id_product'] . '#config'), 'Modules.HelloHarel.Admin') . "</div>
+            <style>
+                .tabs.js-tabs, #step2, #step3, #step4, #step5, #step6,
+                #product-images-container, .summary-description-container, #features, #manufacturer, #related-product,
+                .right-column, .product-footer, #hooks
+                {
+                    display: none!important;
+                }
+                .form_step1_type_product
+                {
+                    visibility: hidden;
+                }
+                .tab-content {
+                    background: none;
+                }
+                .alert > a.float-right {
+                    margin-right: 4px;
+                    padding: 8px 12px;
+                    position: relative;
+                    top: -9px;
+                }
+            });
+            </style>
+            <script>
+            $('input').prop('disabled', true);
+            </script>
+            ";
+        }
     }
 }
