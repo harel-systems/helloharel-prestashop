@@ -222,7 +222,10 @@ class HelloHarel extends Module
         
         if($instanceUrl && $product->helloharel) {
             return "
-            <div class=\"alert alert-info\">" . $this->getTranslator()->trans('This product is managed by Hello Harel. <a href="%url%" class="btn btn-primary float-right"><i class=\"material-icons\">edit</i> Edit on Hello Harel</a>', array('%url%' => $instanceUrl . '/products/products/by_reference/' . $params['id_product'] . '#config'), 'Modules.HelloHarel.Admin') . "</div>
+            <div class=\"alert alert-info\">
+                <a href=\"$instanceUrl/products/products/by_reference/{$params['id_product']}#config\" class=\"btn btn-primary float-right\"><i class=\"material-icons\">edit</i> " . $this->getTranslator()->trans('Edit on Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>
+                " . $this->getTranslator()->trans('This product is managed by Hello Harel.', array(), 'Modules.HelloHarel.Admin') . "
+            </div>
             <style>
                 .tabs.js-tabs, #step2, #step3, #step4, #step5, #step6,
                 #product-images-container, .summary-description-container, #features, #manufacturer, #related-product,
@@ -236,6 +239,10 @@ class HelloHarel extends Module
                 }
                 .tab-content {
                     background: none;
+                }
+                .left-column {
+                    flex: 0 0 100%;
+                    max-width: 100%;
                 }
                 .alert > a.float-right {
                     margin-right: 4px;
