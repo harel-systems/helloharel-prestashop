@@ -4,24 +4,7 @@ if(!defined('_PS_VERSION_')) {
     exit;
 }
 
-use HelloHarel\Domain\Reviewer\Command\UpdateIsAllowedToReviewCommand;
-use HelloHarel\Domain\Reviewer\Exception\CannotCreateReviewerException;
-use HelloHarel\Domain\Reviewer\Exception\CannotToggleAllowedToReviewStatusException;
-use HelloHarel\Domain\Reviewer\Exception\ReviewerException;
-use HelloHarel\Domain\Reviewer\Query\GetReviewerSettingsForForm;
-use HelloHarel\Domain\Reviewer\QueryResult\ReviewerSettingsForForm;
-use Doctrine\DBAL\Query\QueryBuilder;
-use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
-use PrestaShop\PrestaShop\Core\Domain\Customer\Exception\CustomerException;
-use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
-use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
-use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
-use PrestaShop\PrestaShop\Core\Search\Filters\CustomerFilters;
-use PrestaShopBundle\Form\Admin\Type\SwitchType;
-use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpClient\HttpClient;
 
 include_once(_PS_MODULE_DIR_ . 'helloharel/classes/WebserviceSpecificManagementHelloharel.php');
 
@@ -98,14 +81,17 @@ class HelloHarel extends Module
             Configuration::updateValue('HH_API_KEY', $apiKey->id);
             
             $permissions = array(
+                'addresses' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'categories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'customers' => array('POST' => 1),
+                'countries' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'customers' => array('POST' => 1, 'GET' => 1),
                 'helloharel' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'images' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'image_types' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'languages' => array('GET' => 1),
                 'orders' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'products' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'stock_availables' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'tax_rule_groups' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
             );
             
@@ -114,13 +100,21 @@ class HelloHarel extends Module
         return $apiKey;
     }
     
+    private function getHttpClient()
+    {
+        return HttpClient::create(array(
+            'headers' => array(
+                'X-AUTH-TOKEN' => Configuration::get('HH_INSTANCE_KEY'),
+            ),
+        ));
+    }
+    
     public function getContent()
     {
         $output = null;
         
         $apiKey = $this->getWebserviceKey();
-        $instanceUrl = Tools::getValue('HH_INSTANCE_URL', Configuration::get('HH_INSTANCE_URL'));
-        $instanceKey = Tools::getValue('HH_INSTANCE_URL', Configuration::get('HH_INSTANCE_KEY'));
+        $instanceUrl = Configuration::get('HH_INSTANCE_URL');
         
         if($instanceUrl) {
             $output .= '<div class="alert alert-success"><strong>Congratulations!</strong> ' . $this->getTranslator()->trans('Your module is now integrated with <a href="%url%" target="_blank">%url%</a>.', array('%url%' => $instanceUrl), 'Modules.HelloHarel.Admin') . '</div>';
@@ -200,14 +194,80 @@ class HelloHarel extends Module
 
     /**
      * @param array $params = array(
-     *     'newOrderStatus' => (object) OrderState,
-     *     'id_order' => (int) Order ID
+     *     'cart' => (object) Cart,
+     *     'order' => (object) Order,
+     *     'customer' => (object) Customer,
+     *     'currency' => (object) Currency,
+     *     'orderStatus' => (object) OrderState
      * )
      */
-    public function hookActionOrderEdited(array $params)
+    public function hookActionValidateOrder(array $params)
     {
-        $order = $params['id_order'];
+        $instanceUrl = Configuration::get('HH_INSTANCE_URL');
         
+        $order = $params['order'];
+        $customer = $params['customer'];
+        $deliveryAddress = new Address($order->id_address_delivery);
+        $invoicingAddress = new Address($order->id_address_invoice);
+        
+        $rows = Db::getInstance()->executeS('SELECT product_id, product_quantity, product_name, unit_price_tax_excl FROM ' . _DB_PREFIX_ . 'order_detail WHERE id_order = ' . (int)$order->id);
+
+        $items = [];
+        foreach($rows as $row) {
+            $product = new Product($row['product_id']);
+            error_log($row['product_id']);
+            error_log(get_class($product));
+            if(!$product->helloharel) {
+                continue;
+            }
+            $items[] = array(
+                'externalReference' => $row['product_id'],
+                'orderedQuantity' => $row['product_quantity'],
+                'unitPrice' => $row['unit_price_tax_excl'],
+                'label' => $row['product_name'],
+            );
+        }
+        
+        $response = $this->getHttpClient()->request('POST', $instanceUrl . '/api/v1/orders', array(
+            'json' => array(
+                'contact' => array(
+                    'externalReference' => $customer->id,
+                    'firstName' => $customer->firstname,
+                    'lastName' => $customer->lastname,
+                    'email' => $customer->email,
+                ),
+                'customer' => array(
+                    'individual' => $customer->company ? 0 : 1,
+                    'name' => $customer->company,
+                ),
+                'deliveryAddress' => array(
+                    'recipient' => $deliveryAddress->company ?: trim($deliveryAddress->firstname . ' ' . $deliveryAddress->lastname),
+                    'street' => $deliveryAddress->address1,
+                    'details' => $deliveryAddress->address2,
+                    'zipCode' => $deliveryAddress->postcode,
+                    'city' => $deliveryAddress->city,
+                    'country' => (new Country($deliveryAddress->id_country))->iso_code,
+                ),
+                'invoicingAddress' => array(
+                    'recipient' => $invoicingAddress->company ?: trim($invoicingAddress->firstname . ' ' . $invoicingAddress->lastname),
+                    'street' => $invoicingAddress->address1,
+                    'details' => $invoicingAddress->address2,
+                    'zipCode' => $invoicingAddress->postcode,
+                    'city' => $invoicingAddress->city,
+                    'country' => (new Country($invoicingAddress->id_country))->iso_code,
+                ),
+                'shippingMethod' => array(
+                    'externalReference' => $order->id_carrier,
+                    'price' => $order->total_shipping_tax_excl,
+                ),
+                'expectedDeliveryDate' => date('Y-m-d'),
+                'items' => $items,
+            ),
+        ));
+        
+        if($response->getStatusCode() === 200) {
+            $order = $response->toArray();
+        }
     }
 
     /**
