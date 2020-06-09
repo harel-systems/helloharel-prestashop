@@ -429,7 +429,7 @@ class HelloHarel extends Module
                     'email' => $customer->email,
                 ),
                 'customer' => array(
-                    'individual' => $customer->company ? 0 : 1,
+                    'individual' => (string)$customer->company === '' ? 0 : 1,
                     'name' => $customer->company,
                 ),
                 'deliveryAddress' => array(
