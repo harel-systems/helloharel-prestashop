@@ -4,6 +4,7 @@ if(!defined('_PS_VERSION_')) {
     exit;
 }
 
+use HelloHarel\Entity\HelloHarelReference;
 use Symfony\Component\HttpClient\HttpClient;
 
 include_once(_PS_MODULE_DIR_ . 'helloharel/classes/WebserviceSpecificManagementHelloharel.php');
@@ -40,23 +41,171 @@ class HelloHarel extends Module
     {
         return parent::install() &&
             $this->installSql() &&
-            Configuration::updateValue('PS_WEBSERVICE', 'true') &&
             $this->registerHook([
                 'addWebserviceResources',
                 'actionValidateOrder',
+                'actionPaymentCCAdd',
+                'actionPaymentConfirmation',
+                'actionSetInvoice',
                 'displayAdminProductsMainStepLeftColumnBottom',
+                'displayOrderDetail',
+                'displayAdminOrder',
             ])
         ;
     }
     
     protected function installSql()
     {
-        return Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'product ADD helloharel TINYINT(1) NOT NULL');
+        /* NOTE Removed for development
+        // Activate web service
+        if(!Configuration::updateValue('PS_WEBSERVICE', 'true')) {
+            $this->_errors[] = 'Could not activate web service';
+            return false;
+        }
+        
+        $query = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'helloharel_references` (
+            `id_reference` INT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `object_type` VARCHAR(50) NOT NULL,
+            `ps_id` int(20) UNSIGNED NOT NULL,
+            `hh_id` VARCHAR(255) NOT NULL,
+            PRIMARY KEY (`id_reference`)
+        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;';
+
+        if(!Db::getInstance()->execute($query)) {
+            $this->_errors[] = 'Could not create reference table';
+            return false;
+        }
+        if(!Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'orders CHANGE `reference` `reference` VARCHAR(255) DEFAULT NULL')) {
+            $this->_errors[] = 'Could not fix order reference size';
+            return false;
+        }
+        if(!Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'order_payment CHANGE `order_reference` `order_reference` VARCHAR(255) DEFAULT NULL')) {
+            $this->_errors[] = 'Could not fix order reference size';
+            return false;
+        }
+        // Remove problematic properties of order states (invoice, delivery)
+        if(!Db::getInstance()->execute('UPDATE ' . _DB_PREFIX_ . 'order_state SET logable = false, delivery = false, shipped = false, invoice = false, pdf_invoice = false, pdf_delivery = false')) {
+            $this->_errors[] = 'Could not fix order states';
+            return false;
+        }
+        // Create our order events
+        $orderStates = array();
+        $paymentReceived = new OrderState();
+        $paymentReceived->color = '#32cd32';
+        $paymentReceived->module_name = 'helloharel';
+        $paymentReceived->template = 'payment';
+        $paymentReceived->logable = 1;
+        $paymentReceived->paid = 1;
+        $paymentReceived->send_email = 1;
+        $paymentReceived->unremovable = 1;
+        $paymentReceived->name = array();
+        $languages = Language::getLanguages(false);
+        foreach($languages as $language) {
+            $paymentReceived->name[$language['id_lang']] = $this->getTranslator()->trans('Payment received', array(), 'Modules.HelloHarel.Admin');
+        }
+        $paymentReceived->add();
+        $orderStates['payment_received'] = $paymentReceived->id;
+        
+        $orderValidated = new OrderState();
+        $orderValidated->color = '#ff8c00';
+        $orderValidated->module_name = 'helloharel';
+        $orderValidated->template = 'preparation';
+        $orderValidated->logable = 1;
+        $orderValidated->send_email = 1;
+        $orderValidated->unremovable = 1;
+        $orderValidated->name = array();
+        $languages = Language::getLanguages(false);
+        foreach($languages as $language) {
+            $orderValidated->name[$language['id_lang']] = $this->getTranslator()->trans('Order validated', array(), 'Modules.HelloHarel.Admin');
+        }
+        $orderValidated->add();
+        $orderStates['order_validated'] = $orderValidated->id;
+        
+        $shipped = new OrderState();
+        $shipped->color = '#8a2be2';
+        $shipped->module_name = 'helloharel';
+        $shipped->template = 'shipped';
+        $shipped->logable = 1;
+        $shipped->send_email = 1;
+        $shipped->shipped = 1;
+        $shipped->unremovable = 1;
+        $shipped->name = array();
+        $languages = Language::getLanguages(false);
+        foreach($languages as $language) {
+            $shipped->name[$language['id_lang']] = $this->getTranslator()->trans('Shipped', array(), 'Modules.HelloHarel.Admin');
+        }
+        $shipped->add();
+        $orderStates['shipped'] = $shipped->id;
+        
+        $delivered = new OrderState();
+        $delivered->color = '#108510';
+        $delivered->module_name = 'helloharel';
+        $delivered->logable = 1;
+        $delivered->shipped = 1;
+        $delivered->unremovable = 1;
+        $delivered->name = array();
+        $languages = Language::getLanguages(false);
+        foreach($languages as $language) {
+            $delivered->name[$language['id_lang']] = $this->getTranslator()->trans('Delivered', array(), 'Modules.HelloHarel.Admin');
+        }
+        $delivered->add();
+        $orderStates['delivered'] = $delivered->id;
+        
+        $cancelled = new OrderState();
+        $cancelled->color = '#dc143c';
+        $cancelled->module_name = 'helloharel';
+        $cancelled->template = 'ordered_canceled';
+        $cancelled->send_email = 1;
+        $cancelled->unremovable = 1;
+        $cancelled->name = array();
+        $languages = Language::getLanguages(false);
+        foreach($languages as $language) {
+            $cancelled->name[$language['id_lang']] = $this->getTranslator()->trans('Cancelled', array(), 'Modules.HelloHarel.Admin');
+        }
+        $cancelled->add();
+        $orderStates['cancelled'] = $cancelled->id;
+        
+        if(!Configuration::updateValue('HH_ORDER_STATES', json_encode($orderStates))) {
+            $this->_errors[] = 'Could not set order states configuration';
+            return false;
+        }
+        */
+        
+        return true;
+    }
+    
+    public function uninstall()
+    {
+        return $this->deleteWebserviceKey() &&
+            $this->uninstallSql() &&
+            parent::uninstall();
+    }
+    
+    public function deleteWebserviceKey()
+    {
+        /* NOTE Remove for development
+        $apiKey = new WebserviceKey(Configuration::get('HH_API_KEY'));
+        $apiKey->delete();
+        Configuration::deleteByName('HH_API_KEY');
+        Configuration::deleteByName('HH_INSTANCE_KEY');
+        Configuration::deleteByName('HH_INSTANCE_URL');
+        */
+        return true;
     }
     
     protected function uninstallSql()
     {
-        return Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'product DROP helloharel');
+        /* NOTE Removed for development
+        if(!Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'helloharel_references`')) {
+            $this->_errors[] = 'Could not delete reference table';
+            return false;
+        }
+        if(!Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'order_state WHERE module_name = \'helloharel\'')) {
+            $this->_errors[] = 'Could not delete custom order states';
+            return false;
+        }
+        */
+        return true;
     }
     
     public function hookAddWebserviceResources()
@@ -65,6 +214,10 @@ class HelloHarel extends Module
             'helloharel' => array(
                 'description' => 'Hello Harel configuration',
                 'specific_management' => true,
+            ),
+            'helloharel_references' => array(
+                'description' => 'Hello Harel references',
+                'class' => 'HelloHarel\\Entity\\HelloHarelReference',
             ),
         );
     }
@@ -82,17 +235,74 @@ class HelloHarel extends Module
             
             $permissions = array(
                 'addresses' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'carriers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'cart_rules' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'carts' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'categories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'combinations' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'configurations' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'contacts' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'content_management_system' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'countries' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'customers' => array('POST' => 1, 'GET' => 1),
+                'currencies' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'customer_messages' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'customer_threads' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'customers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'customizations' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'deliveries' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'employees' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'groups' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'guests' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'helloharel' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'images' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'helloharel_references' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'image_types' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'languages' => array('GET' => 1),
+                'images' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'languages' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'manufacturers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'messages' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'order_carriers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'order_details' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'order_histories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'order_invoices' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'order_payments' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'order_slip' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'order_states' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'orders' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'price_ranges' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'product_customization_fields' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'product_feature_values' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'product_features' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'product_option_values' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'product_options' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'product_suppliers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'products' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'search' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'shop_groups' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'shop_urls' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'shops' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'specific_price_rules' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'specific_prices' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'states' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'stock_availables' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'stock_movement_reasons' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'stock_movements' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'stocks' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'stores' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'suppliers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'supply_order_details' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'supply_order_histories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'supply_order_receipt_histories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'supply_order_states' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'supply_orders' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'tags' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
                 'tax_rule_groups' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'tax_rules' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'taxes' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'translated_configurations' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'warehouse_product_locations' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'warehouses' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'weight_ranges' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
+                'zones' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
             );
             
             WebserviceKey::setPermissionForAccount($apiKey->id, $permissions);
@@ -173,25 +383,6 @@ class HelloHarel extends Module
         return $output;
     }
 
-
-    public function uninstall()
-    {
-        return $this->deleteWebserviceKey() &&
-            $this->uninstallSql() &&
-            parent::uninstall();
-    }
-    
-    public function deleteWebserviceKey()
-    {
-        $apiKey = new WebserviceKey(Configuration::get('HH_API_KEY'));
-        $apiKey->delete();
-        Configuration::deleteByName('HH_API_KEY');
-        Configuration::deleteByName('HH_INSTANCE_KEY');
-        Configuration::deleteByName('HH_INSTANCE_URL');
-        
-        return true;
-    }
-
     /**
      * @param array $params = array(
      *     'cart' => (object) Cart,
@@ -210,14 +401,14 @@ class HelloHarel extends Module
         $deliveryAddress = new Address($order->id_address_delivery);
         $invoicingAddress = new Address($order->id_address_invoice);
         
+        $managedProducts = array_map('current', Db::getInstance()->executeS('SELECT ps_id FROM ' . _DB_PREFIX_ . 'helloharel_references WHERE object_type = "product"'));
+        
         $rows = Db::getInstance()->executeS('SELECT product_id, product_quantity, product_name, unit_price_tax_excl FROM ' . _DB_PREFIX_ . 'order_detail WHERE id_order = ' . (int)$order->id);
 
         $items = [];
         foreach($rows as $row) {
-            $product = new Product($row['product_id']);
-            error_log($row['product_id']);
-            error_log(get_class($product));
-            if(!$product->helloharel) {
+            if(!in_array($row['product_id'], $managedProducts)) {
+                error_log($row['product_id'] . ' is not managed by hello harel. Managed products are: ' . implode(', ', $managedProducts));
                 continue;
             }
             $items[] = array(
@@ -230,6 +421,7 @@ class HelloHarel extends Module
         
         $response = $this->getHttpClient()->request('POST', $instanceUrl . '/api/v1/orders', array(
             'json' => array(
+                'externalId' => $order->id,
                 'contact' => array(
                     'externalReference' => $customer->id,
                     'firstName' => $customer->firstname,
@@ -266,8 +458,93 @@ class HelloHarel extends Module
         ));
         
         if($response->getStatusCode() === 200) {
-            $order = $response->toArray();
+            error_log('success');
+            $_order = $response->toArray();
+            if($_order['code']) {
+                $order->reference = $_order['code'];
+            }
+            if($_order['access_id']) {
+                $reference = new HelloHarel\Entity\HelloHarelReference();
+                $reference->object_type = 'order';
+                $reference->ps_id = $order->id;
+                $reference->hh_id = $_order['access_id'];
+                $reference->save();
+            }
+            $order->save();
+        } else {
+            error_log('failure');
         }
+    }
+
+    /**
+     * @param array $params = array(
+     *     'paymentCC' => (object) OrderPayment
+     * )
+     */
+    public function hookActionPaymentCCAdd(array $params)
+    {
+        $instanceUrl = Configuration::get('HH_INSTANCE_URL');
+        
+        $payment = $params['paymentCC'];
+        
+        $orders = Db::getInstance()->executeS('SELECT id_order FROM ' . _DB_PREFIX_ . 'orders WHERE reference = "' . (string)$payment->order_reference . '"');
+        
+        if(!$orders || count($orders) !== 1) {
+            error_log('No single order found for payment with order reference ' . (string)$payment->order_reference);
+            // No payment
+            return;
+        } else {
+            error_log(json_encode($orders));
+        }
+        
+        $order = new Order($orders[0]['id_order']);
+        
+        $response = $this->getHttpClient()->request('POST', $instanceUrl . '/api/v1/payments', array(
+            'json' => array(
+                'type' => 'external',
+                'customer' => array(
+                    'externalReference' => $order->id_customer,
+                ),
+                'date' => substr($payment->date_add, 0, 10),
+                'amount' => $payment->amount,
+                'reference' => $payment->transaction_id,
+                'comment' => $payment->payment_method,
+                'operations' => [
+                    array(
+                        'orderExternalReference' => $order->id,
+                        'amount' => $payment->amount,
+                    ),
+                ],
+            ),
+        ));
+        
+        if($response->getStatusCode() === 200) {
+            $_payment = $response->toArray();
+        } else {
+            error_log('Payment could not be created on Hello Harel. Error code ' . $response->getStatusCode());
+        }
+    }
+
+    /**
+     * @param array $params = array(
+     *     'id_order' => (int) Order ID
+     * )
+     */
+    public function hookActionPaymentConfirmation(array $params)
+    {
+        
+    }
+
+    /**
+     * @param array $params = array(
+     *     'Order' => (object) Order,
+     *     'OrderInvoice' => (object) OrderInvoice,
+     *     'use_existing_payment' => (bool)
+     * )
+     */
+    public function hookActionSetInvoice(array $params)
+    {
+        
     }
 
     /**
@@ -280,10 +557,13 @@ class HelloHarel extends Module
         $instanceUrl = Configuration::get('HH_INSTANCE_URL');
         $product = new Product($params['id_product']);
         
-        if($instanceUrl && $product->helloharel) {
+        $reference = HelloHarelReference::getHelloHarelId('product', $product->id);
+        
+        if($instanceUrl && $reference !== null) {
             return "
             <div class=\"alert alert-info\">
-                <a href=\"$instanceUrl/products/products/by_reference/{$params['id_product']}#config\" class=\"btn btn-primary float-right\"><i class=\"material-icons\">edit</i> " . $this->getTranslator()->trans('Edit on Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>
+                " . json_encode($reference) . "
+                <a href=\"$instanceUrl/products/products/by_reference/{$params['id_product']}#config\" class=\"btn btn-primary float-right\"><i class=\"material-icons\">edit</i> " . $this->getTranslator()->trans('View on Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>
                 " . $this->getTranslator()->trans('This product is managed by Hello Harel.', array(), 'Modules.HelloHarel.Admin') . "
             </div>
             <style>
@@ -315,6 +595,74 @@ class HelloHarel extends Module
             <script>
             $('input').prop('disabled', true);
             </script>
+            ";
+        }
+    }
+
+    /**
+     * @param array $params = array(
+     *      'id_order' => (int) Order ID
+     * )
+     */
+    public function hookDisplayAdminOrder(array $params)
+    {
+        $instanceUrl = Configuration::get('HH_INSTANCE_URL');
+        $order = new Order($params['id_order']);
+        
+        $reference = HelloHarelReference::getHelloHarelId('order', $order->id);
+        
+        if($instanceUrl && $reference !== null) {
+            return "
+            <div class=\"alert alert-info\">
+                <a href=\"$instanceUrl/sales/orders/by_reference/ordering.prestashop/{$order->id}\" class=\"btn btn-primary pull-right\"><i class=\"material-icons\">edit</i> " . $this->getTranslator()->trans('View on Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>
+                " . $this->getTranslator()->trans('This order is managed by Hello Harel.', array(), 'Modules.HelloHarel.Admin') . "
+            </div>
+            <style>
+                .panel, .alert-warning
+                {
+                    display: none!important;
+                }
+                
+                .alert > a.pull-right {
+                    margin-right: 4px;
+                    padding: 8px 12px;
+                    position: relative;
+                    top: -9px;
+                }
+                
+                .alert > a .material-icons {
+                    font-size: 1.4em;
+                    margin-top: -.083em;
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+            });
+            </style>
+            <script>
+            $('input').prop('disabled', true);
+            </script>
+            ";
+        }
+    }
+
+    /**
+     * @param array $params = array(
+     *      'order' => (object) Order object
+     * )
+     */
+    public function hookDisplayOrderDetail(array $params)
+    {
+        $instanceUrl = Configuration::get('HH_INSTANCE_URL');
+        if($instanceUrl && $params['order']->helloharel_id) {
+            return "
+            <a class=\"box\" style=\"display: block; text-align: center;\" href=\""  . $instanceUrl . "/public/order/" . $params['order']->helloharel_id . "/download\">
+                <i class=\"material-icons\">cloud_download</i> " . $this->getTranslator()->trans('Download your invoice', array(), 'Modules.HelloHarel.Admin') . "
+            </a>
+            <style>
+            #order-infos .box:nth-child(2) a {
+                display: none;
+            }
+            </style>
             ";
         }
     }
