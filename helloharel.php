@@ -50,16 +50,52 @@ class HelloHarel extends Module
                 'displayAdminProductsMainStepLeftColumnBottom',
                 'displayOrderDetail',
                 'displayAdminOrder',
+                'displayCustomerAccount',
             ])
+        ;
+    }
+    
+    private function disableModule($name)
+    {
+        $query = new \DbQuery();
+        $query->select('id_module');
+        $query->from('module');
+        $query->where('name = "' . $name . '"');
+        
+        $id = \Db::getInstance()->getValue($query);
+        
+        if(!$id) {
+            return true;
+        }
+        
+        // FIXME It works, but the uninstalled module shows up weirdly in the module manager
+        return  Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'hook_module WHERE id_module=' . (int)$id)
+            &&
+                Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'module_shop WHERE id_module=' . (int)$id)
+            &&
+                Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'module_group WHERE id_module=' . (int)$id)
+            &&
+                Db::getInstance()->execute('UPDATE ' . _DB_PREFIX_ . 'module SET active = 0 WHERE name="' . $name . '"')
         ;
     }
     
     protected function installSql()
     {
+        // Disable conflicting modules
+        if(!$this->disableModule('ps_customeraccountlinks')) {
+            $this->_errors[] = 'Could not disable ps_customeraccountlinks module';
+            return false;
+            
+        }
+        
         /* NOTE Removed for development
         // Activate web service
         if(!Configuration::updateValue('PS_WEBSERVICE', 'true')) {
             $this->_errors[] = 'Could not activate web service';
+            return false;
+        }
+        if(!Configuration::updateValue('PS_ORDER_RETURN', '0')) {
+            $this->_errors[] = 'Could not deactivate returns';
             return false;
         }
         
@@ -88,6 +124,7 @@ class HelloHarel extends Module
             $this->_errors[] = 'Could not fix order states';
             return false;
         }
+        
         // Create our order events
         $orderStates = array();
         $paymentReceived = new OrderState();
@@ -195,11 +232,13 @@ class HelloHarel extends Module
     
     protected function uninstallSql()
     {
-        /* NOTE Removed for development
+        /* Keep references if the module is reactivated
         if(!Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'helloharel_references`')) {
             $this->_errors[] = 'Could not delete reference table';
             return false;
         }
+        */
+        /* NOTE Removed for development
         if(!Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'order_state WHERE module_name = \'helloharel\'')) {
             $this->_errors[] = 'Could not delete custom order states';
             return false;
@@ -453,6 +492,7 @@ class HelloHarel extends Module
                     'price' => $order->total_shipping_tax_excl,
                 ),
                 'expectedDeliveryDate' => date('Y-m-d'),
+                'comment' => html_entity_decode($params['order']->getFirstMessage(), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'items' => $items,
             ),
         ));
@@ -617,7 +657,10 @@ class HelloHarel extends Module
                 <a href=\"$instanceUrl/sales/orders/by_reference/ordering.prestashop/{$order->id}\" class=\"btn btn-primary pull-right\"><i class=\"material-icons\">edit</i> " . $this->getTranslator()->trans('View on Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>
                 " . $this->getTranslator()->trans('This order is managed by Hello Harel.', array(), 'Modules.HelloHarel.Admin') . "
             </div>
-            <style>
+            <div class=\"text-center\">
+                <button class=\"btn btn-default\" id=\"hh_takeover\">Take over!</button>
+            </div>
+            <style id=\"hh_style\">
                 .panel, .alert-warning
                 {
                     display: none!important;
@@ -636,10 +679,14 @@ class HelloHarel extends Module
                     display: inline-block;
                     vertical-align: middle;
                 }
-            });
             </style>
             <script>
             $('input').prop('disabled', true);
+            $('#hh_takeover').click(function() {
+                $('#hh_style').remove();
+                $('input').prop('disabled', false);
+                $(this).remove();
+            });
             </script>
             ";
         }
@@ -653,14 +700,39 @@ class HelloHarel extends Module
     public function hookDisplayOrderDetail(array $params)
     {
         $instanceUrl = Configuration::get('HH_INSTANCE_URL');
-        if($instanceUrl && $params['order']->helloharel_id) {
+        
+        $reference = HelloHarelReference::getHelloHarelId('order', $params['order']->id);
+        
+        $comments = CustomerThread::getCustomerMessagesOrder($params['order']->id_customer, $params['order']->id);
+        
+        if($instanceUrl && $reference !== null) {
             return "
-            <a class=\"box\" style=\"display: block; text-align: center;\" href=\""  . $instanceUrl . "/public/order/" . $params['order']->helloharel_id . "/download\">
+            <a class=\"box\" style=\"display: block; text-align: center;\" href=\"$instanceUrl/public/invoice/$reference/download\">
                 <i class=\"material-icons\">cloud_download</i> " . $this->getTranslator()->trans('Download your invoice', array(), 'Modules.HelloHarel.Admin') . "
             </a>
             <style>
             #order-infos .box:nth-child(2) a {
                 display: none;
+            }
+            </style>
+            ";
+        }
+    }
+
+    /**
+     * @param array $params = array(
+     *      'order' => (object) Order object
+     * )
+     */
+    public function hookDisplayCustomerAccount(array $params)
+    {
+        $instanceUrl = Configuration::get('HH_INSTANCE_URL');
+        
+        if($instanceUrl) {
+            return "
+            <style>
+            #order-slips-link {
+                display: none!important;
             }
             </style>
             ";
