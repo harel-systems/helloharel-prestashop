@@ -51,6 +51,7 @@ class HelloHarel extends Module
                 'displayOrderDetail',
                 'displayAdminOrder',
                 'displayCustomerAccount',
+                'displayAdminAfterHeader',
             ])
         ;
     }
@@ -88,7 +89,6 @@ class HelloHarel extends Module
             
         }
         
-        /* NOTE Removed for development
         // Activate web service
         if(!Configuration::updateValue('PS_WEBSERVICE', 'true')) {
             $this->_errors[] = 'Could not activate web service';
@@ -206,7 +206,6 @@ class HelloHarel extends Module
             $this->_errors[] = 'Could not set order states configuration';
             return false;
         }
-        */
         
         return true;
     }
@@ -220,13 +219,12 @@ class HelloHarel extends Module
     
     public function deleteWebserviceKey()
     {
-        /* NOTE Remove for development
         $apiKey = new WebserviceKey(Configuration::get('HH_API_KEY'));
         $apiKey->delete();
         Configuration::deleteByName('HH_API_KEY');
         Configuration::deleteByName('HH_INSTANCE_KEY');
         Configuration::deleteByName('HH_INSTANCE_URL');
-        */
+        
         return true;
     }
     
@@ -238,12 +236,12 @@ class HelloHarel extends Module
             return false;
         }
         */
-        /* NOTE Removed for development
+        
         if(!Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'order_state WHERE module_name = \'helloharel\'')) {
             $this->_errors[] = 'Could not delete custom order states';
             return false;
         }
-        */
+        
         return true;
     }
     
@@ -463,7 +461,7 @@ class HelloHarel extends Module
             return;
         }
         
-        $expectedDeliveryDate = date('Y-m-d');
+        $expectedDeliveryDate = date('Y-m-d 00:00:00');
         if($order->ddw_order_date) {
             $expectedDeliveryDate = $order->ddw_order_date;
         }
@@ -612,7 +610,6 @@ class HelloHarel extends Module
         if($instanceUrl && $reference !== null) {
             return "
             <div class=\"alert alert-info\">
-                " . json_encode($reference) . "
                 <a href=\"$instanceUrl/products/products/by_reference/{$params['id_product']}#config\" class=\"btn btn-primary float-right\"><i class=\"material-icons\">edit</i> " . $this->getTranslator()->trans('View on Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>
                 " . $this->getTranslator()->trans('This product is managed by Hello Harel.', array(), 'Modules.HelloHarel.Admin') . "
             </div>
@@ -746,6 +743,24 @@ class HelloHarel extends Module
             }
             </style>
             ";
+        }
+    }
+
+    /**
+     * @param array $params = array(
+     *
+     * )
+     */
+    public function hookDisplayAdminAfterHeader(array $params)
+    {
+        $instanceUrl = Configuration::get('HH_INSTANCE_URL');
+        if($instanceUrl) {
+            switch(Context::getContext()->controller->php_self) {
+                case 'AdminProducts':
+                    return "<script>
+                    $('#page-header-desc-configuration-add').replaceWith('<a href=\"#\" class=\"btn btn-primary pointer disabled\">" . $this->getTranslator()->trans('Products are managed by Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>');
+                    </script>";
+            }
         }
     }
 }
