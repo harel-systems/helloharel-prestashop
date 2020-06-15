@@ -57,10 +57,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh """
-#cat <<EOF | sftp 2132118@sftp.sd3.gpaas.net
-#put -r ./* vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel
-#EOF
-lftp -c \"open -u 2132118, sftp://sftp.sd3.gpaas.net && mirror -R -e -x 'Jenkinsfile|\\..*' ./ vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel/\"
+lftp -c \"open -u 2132118, sftp://sftp.sd3.gpaas.net && mirror -R -e -v -x 'Jenkinsfile|\\..*' ./ vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel/\"
                 """
             }
         }
