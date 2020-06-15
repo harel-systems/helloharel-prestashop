@@ -51,6 +51,12 @@ class WebserviceSpecificManagementHelloharel implements WebserviceSpecificManage
                 }
                 Configuration::updateValue('HH_INSTANCE_URL', $_POST['url']);
                 Configuration::updateValue('HH_INSTANCE_KEY', $_POST['key']);
+            case 'GET':
+                $this->objOutput->setHeaderParams('Content-Type', 'application/json');
+                $this->output .= json_encode(array(
+                    'admin_dir' => null,
+                    'order_states' => json_decode(Configuration::get('HH_ORDER_STATES'), true),
+                ));
                 break;
             default:
                 throw new WebserviceException('Method unsupported', [100, 400]);
