@@ -458,6 +458,11 @@ class HelloHarel extends Module
             );
         }
         
+        $expectedDeliveryDate = date('Y-m-d');
+        if($order->ddw_order_date) {
+            $expectedDeliveryDate = $order->ddw_order_date;
+        }
+        
         $response = $this->getHttpClient()->request('POST', $instanceUrl . '/api/v1/orders', array(
             'json' => array(
                 'externalId' => $order->id,
@@ -491,7 +496,7 @@ class HelloHarel extends Module
                     'externalReference' => $order->id_carrier,
                     'price' => $order->total_shipping_tax_excl,
                 ),
-                'expectedDeliveryDate' => date('Y-m-d'),
+                'expectedDeliveryDate' => $expectedDeliveryDate,
                 'comment' => html_entity_decode($params['order']->getFirstMessage(), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'items' => $items,
             ),
