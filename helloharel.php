@@ -458,6 +458,11 @@ class HelloHarel extends Module
             );
         }
         
+        if(count($rows) !== count($items)) {
+            error_log($params['order']->id . ' was not created on Hello Harel because some products were not mapped.');
+            return;
+        }
+        
         $expectedDeliveryDate = date('Y-m-d');
         if($order->ddw_order_date) {
             $expectedDeliveryDate = $order->ddw_order_date;
