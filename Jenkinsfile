@@ -58,7 +58,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh """
-lftp -c \"open -u 2132118, sftp://sftp.sd3.gpaas.net && mirror -R -e -v -x 'Jenkinsfile|\\..*' ./ vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel/\"
+lftp -c \"open -u 2132118, sftp://sftp.sd3.gpaas.net && mirror -R -e -v -x 'Jenkinsfile|\\.git.*' ./ vhosts/prestashop.harelsystems.io/htdocs/modules/helloharel/\"
                 """
             }
         }
