@@ -466,9 +466,34 @@ class HelloHarel extends Module
             $expectedDeliveryDate = $order->ddw_order_date;
         }
         
+        $calculationMode = array(
+            Order::ROUND_ITEM => 'unit',
+            Order::ROUND_LINE => 'line',
+            Order::ROUND_TOTAL => 'total',
+        )[Configuration::get('PS_ROUND_TYPE')];
+        
+        $roundingMode = array(
+            PS_ROUND_UP => 'up',
+            PS_ROUND_DOWN => 'down',
+            PS_ROUND_HALF_UP => 'half_up',
+            PS_ROUND_HALF_DOWN => 'half_down',
+            PS_ROUND_HALF_EVEN => 'half_even',
+            PS_ROUND_HALF_ODD => 'half_odd',
+        )[Configuration::get('PS_PRICE_ROUND_MODE')];
+        
+        $vouchers = [];
+        if($order->total_discounts_tax_incl) {
+            $vouchers[] = array(
+                'description' => $this->getTranslator()->trans('PrestaShop voucher', array(), 'Modules.HelloHarel.Order'),
+                'amount' => $order->total_discounts_tax_incl,
+            );
+        }
+        
         $response = $this->getHttpClient()->request('POST', $instanceUrl . '/api/v1/orders', array(
             'json' => array(
                 'externalId' => $order->id,
+                'calculationMode' => $calculationMode,
+                'roundingMode' => $roundingMode,
                 'contact' => array(
                     'externalReference' => $customer->id,
                     'firstName' => $customer->firstname,
@@ -502,6 +527,7 @@ class HelloHarel extends Module
                 'expectedDeliveryDate' => $expectedDeliveryDate,
                 'comment' => html_entity_decode($params['order']->getFirstMessage(), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'items' => $items,
+                'vouchers' => $vouchers,
             ),
         ));
         
