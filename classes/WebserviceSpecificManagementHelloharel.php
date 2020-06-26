@@ -53,9 +53,13 @@ class WebserviceSpecificManagementHelloharel implements WebserviceSpecificManage
                 Configuration::updateValue('HH_INSTANCE_KEY', $_POST['key']);
             case 'GET':
                 $this->objOutput->setHeaderParams('Content-Type', 'application/json');
+                
+                $unmanagedProducts = array_map('current', Db::getInstance()->executeS('SELECT p.id_product FROM ' . _DB_PREFIX_ . 'product p WHERE p.id_product NOT IN (SELECT r.ps_id FROM ' . _DB_PREFIX_ . 'helloharel_references r WHERE r.object_type = "product")'));
+                
                 $this->output .= json_encode(array(
                     'admin_dir' => null,
                     'order_states' => json_decode(Configuration::get('HH_ORDER_STATES'), true),
+                    'unmanaged_products' => $unmanagedProducts,
                 ));
                 break;
             default:
