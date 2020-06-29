@@ -54,7 +54,7 @@ class WebserviceSpecificManagementHelloharel implements WebserviceSpecificManage
             case 'GET':
                 $this->objOutput->setHeaderParams('Content-Type', 'application/json');
                 
-                $unmanagedProducts = array_map('current', Db::getInstance()->executeS('SELECT p.id_product FROM ' . _DB_PREFIX_ . 'product p WHERE p.id_product NOT IN (SELECT r.ps_id FROM ' . _DB_PREFIX_ . 'helloharel_references r WHERE r.object_type = "product")'));
+                $unmanagedProducts = array_map('current', Db::getInstance()->executeS('SELECT p.id_product FROM ' . _DB_PREFIX_ . 'product p WHERE p.visibility != "" AND p.id_product NOT IN (SELECT r.ps_id FROM ' . _DB_PREFIX_ . 'helloharel_references r WHERE r.object_type = "product")'));
                 
                 $this->output .= json_encode(array(
                     'admin_dir' => null,
