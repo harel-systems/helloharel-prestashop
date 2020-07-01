@@ -52,6 +52,7 @@ class HelloHarel extends Module
                 'displayAdminOrder',
                 'displayCustomerAccount',
                 'displayAdminAfterHeader',
+                'actionCustomerAccountUpdate',
             ])
         ;
     }
@@ -462,7 +463,7 @@ class HelloHarel extends Module
         }
         
         $expectedDeliveryDate = date('Y-m-d 00:00:00');
-        if($order->ddw_order_date) {
+        if(isset($order->ddw_order_date)) {
             $expectedDeliveryDate = $order->ddw_order_date;
         }
         
@@ -546,7 +547,7 @@ class HelloHarel extends Module
             }
             $order->save();
         } else {
-            error_log('failure');
+            error_log('Order creation request failed with error ' . $response->getStatusCode());
         }
     }
 
@@ -787,6 +788,35 @@ class HelloHarel extends Module
                     $('#page-header-desc-configuration-add').replaceWith('<a href=\"#\" class=\"btn btn-primary pointer disabled\">" . $this->getTranslator()->trans('Products are managed by Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>');
                     </script>";
             }
+        }
+    }
+
+    /**
+     * @param array $params = array(
+     *      'customer' => (object) Customer object
+     * )
+     */
+    public function hookActionCustomerAccountUpdate(array $params)
+    {
+        $instanceUrl = Configuration::get('HH_INSTANCE_URL');
+        
+        $customer = $params['customer'];
+        
+        // TODO Check reference locally (should be created on order creation)
+        
+        $response = $this->getHttpClient()->request('PATCH', $instanceUrl . '/api/v1/contact_references', array(
+            'json' => array(
+                'externalReference' => $customer->id,
+                'firstName' => $customer->firstname,
+                'lastName' => $customer->lastname,
+                'email' => $customer->email,
+            ),
+        ));
+        
+        if($response->getStatusCode() === 200) {
+            $_payment = $response->toArray();
+        } else {
+            error_log('Customer could not be updated on Hello Harel. Error code ' . $response->getStatusCode());
         }
     }
 }
