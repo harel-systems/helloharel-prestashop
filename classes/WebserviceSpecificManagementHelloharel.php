@@ -49,8 +49,8 @@ class WebserviceSpecificManagementHelloharel implements WebserviceSpecificManage
                 if(!isset($_POST['url']) || !isset($_POST['key'])) {
                     throw new WebserviceException('You have send values for the \'url\' and \'key\' fields', [100, 400]);
                 }
-                Configuration::updateValue('HH_INSTANCE_URL', $_POST['url']);
-                Configuration::updateValue('HH_INSTANCE_KEY', $_POST['key']);
+                \Configuration::updateValue('HH_INSTANCE_URL', $_POST['url']);
+                \Configuration::updateValue('HH_INSTANCE_KEY', $_POST['key']);
             case 'GET':
                 $this->objOutput->setHeaderParams('Content-Type', 'application/json');
                 
@@ -58,7 +58,7 @@ class WebserviceSpecificManagementHelloharel implements WebserviceSpecificManage
                 
                 $this->output .= json_encode(array(
                     'admin_dir' => null,
-                    'order_states' => json_decode(Configuration::get('HH_ORDER_STATES'), true),
+                    'order_states' => json_decode(\Configuration::get('HH_ORDER_STATES'), true),
                     'unmanaged_products' => $unmanagedProducts,
                 ));
                 break;
