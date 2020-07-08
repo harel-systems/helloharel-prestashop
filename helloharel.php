@@ -486,7 +486,7 @@ class HelloHarel extends Module
         if($order->total_discounts_tax_incl) {
             $vouchers[] = array(
                 'description' => $this->getTranslator()->trans('PrestaShop voucher', array(), 'Modules.HelloHarel.Order'),
-                'amount' => $order->total_discounts_tax_incl,
+                'taxedAmount' => $order->total_discounts_tax_incl,
             );
         }
         
@@ -538,12 +538,20 @@ class HelloHarel extends Module
             if($_order['code']) {
                 $order->reference = $_order['code'];
             }
+            $customerReference = HelloHarelReference::getHelloHarelId('customer', $customer->id);
+            if($customerReference === null) {
+                $customerReference = new HelloHarel\Entity\HelloHarelReference();
+                $customerReference->object_type = 'customer';
+                $customerReference->ps_id = $customer->id;
+                $customerReference->hh_id = $_order['contact']['id'];
+                $customerReference->save();
+            }
             if($_order['access_id']) {
-                $reference = new HelloHarel\Entity\HelloHarelReference();
-                $reference->object_type = 'order';
-                $reference->ps_id = $order->id;
-                $reference->hh_id = $_order['access_id'];
-                $reference->save();
+                $orderReference = new HelloHarel\Entity\HelloHarelReference();
+                $orderReference->object_type = 'order';
+                $orderReference->ps_id = $order->id;
+                $orderReference->hh_id = $_order['access_id'];
+                $orderReference->save();
             }
             $order->save();
         } else {
@@ -802,21 +810,24 @@ class HelloHarel extends Module
         
         $customer = $params['customer'];
         
-        // TODO Check reference locally (should be created on order creation)
+        $reference = HelloHarelReference::getHelloHarelId('customer', $customer->id);
         
-        $response = $this->getHttpClient()->request('PATCH', $instanceUrl . '/api/v1/contact_references', array(
-            'json' => array(
-                'externalReference' => $customer->id,
-                'firstName' => $customer->firstname,
-                'lastName' => $customer->lastname,
-                'email' => $customer->email,
-            ),
-        ));
-        
-        if($response->getStatusCode() === 200) {
-            $_payment = $response->toArray();
-        } else {
-            error_log('Customer could not be updated on Hello Harel. Error code ' . $response->getStatusCode());
+        if($reference !== null) {
+            $response = $this->getHttpClient()->request('PATCH', $instanceUrl . '/api/v1/contact_references', array(
+                'json' => array(
+                    'id' => $reference->hh_id,
+                    'externalReference' => $customer->id,
+                    'firstName' => $customer->firstname,
+                    'lastName' => $customer->lastname,
+                    'email' => $customer->email,
+                ),
+            ));
+            
+            if($response->getStatusCode() === 200) {
+                $_payment = $response->toArray();
+            } else {
+                error_log('Customer could not be updated on Hello Harel. Error code ' . $response->getStatusCode());
+            }
         }
     }
 }
