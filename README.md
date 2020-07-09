@@ -10,9 +10,6 @@ Official [Hello Harel ERP](https://www.helloharel.com) module for PrestaShop.
 
 ## How To
 
-* Install this module in your PrestaShop instance
-* Open the module's configuration page (it shows a URL and token) and keep it open (you will need this information in Hello Harel)
-* If you don't use Hello Harel already, go create your instance on [helloharel.com](https://www.helloharel.com)
-* Go to the "External applications" section of your Administration. Select the "PrestaShop" app and click "Activate app"
-* Open the "App settings" tab and enter the information from the PrestaShop module configuration page
-* You're all set!
+* Install this module in your PrestaShop instance (using an archive from the [Releases](releases) section)
+* Open the module's configuration page and follow the instructions there
+* That's it!
