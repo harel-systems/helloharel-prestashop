@@ -6,7 +6,7 @@ use Db;
 
 class ReferenceManager extends AbstractManager
 {
-    public function install($app)
+    public function install()
     {
         $query = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'helloharel_references` (
             `id_reference` INT(20) UNSIGNED NOT NULL AUTO_INCREMENT,

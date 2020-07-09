@@ -48,9 +48,10 @@ class HelloHarel extends Module
         return true;
     }
     
-    protected function trans($message, $params, $domain)
+    public function render($template, $vars = array())
     {
-        return $this->getTranslator()->trans($message, $params, $domain);
+        $this->smarty->assign($vars);
+        return $this->fetch($template);
     }
     
     public function install()

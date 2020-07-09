@@ -33,4 +33,15 @@ class HelloHarelReference extends \ObjectModel
         $id = \Db::getInstance()->getValue($query);
         return $id ?: null;
     }
+    
+    public function countReferences($type)
+    {
+        $query = new \DbQuery();
+        $query->select('COUNT(DISTINCT hh_id)');
+        $query->from(self::TABLE);
+        $query->where('object_type = "' . pSQL($type) . '"');
+        
+        $id = \Db::getInstance()->getValue($query);
+        return $id ?: 0;
+    }
 }

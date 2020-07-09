@@ -3,11 +3,12 @@
 namespace HelloHarel\Manager;
 
 use Configuration;
+use HelloHarel\Entity\HelloHarelReference;
 use WebserviceKey;
 
 class ConfigManager extends AbstractManager
 {
-    public function install($app)
+    public function install()
     {
         if(!Configuration::updateValue('PS_WEBSERVICE', 'true')) {
             $app->_errors[] = 'Could not activate web service';
@@ -18,14 +19,12 @@ class ConfigManager extends AbstractManager
     
     public function uninstall()
     {
-        $apiKey = new WebserviceKey(Configuration::get('HH_API_KEY'));
-        $apiKey->delete();
-        Configuration::deleteByName('HH_API_KEY');
+        $this->deleteApiKey();
         Configuration::deleteByName('HH_INSTANCE_KEY');
         Configuration::deleteByName('HH_INSTANCE_URL');
     }
     
-    public function getWebserviceKey()
+    private function getApiKey()
     {
         if($id = Configuration::get('HH_API_KEY')) {
             $apiKey = new WebserviceKey($id);
@@ -113,63 +112,50 @@ class ConfigManager extends AbstractManager
         return $apiKey;
     }
     
+    private function deleteApiKey()
+    {
+        if($apiKey = $this->getApiKey()) {
+            $apiKey->delete();
+            Configuration::updateValue('HH_API_KEY', null);
+        }
+    }
+    
     public function configView()
     {
-        $apiKey = $this->getWebserviceKey();
+        $apiKey = $this->getApiKey();
         $instanceUrl = Configuration::get('HH_INSTANCE_URL');
+        $action = array(
+            'type' => null,
+        );
+        if(isset($_POST['unlink_confirm']) || isset($_POST['unlink'])) {
+            $action['type'] = 'unlink';
+            $action['confirmed'] = isset($_POST['unlink_confirm']);
+            if($action['confirmed']) {
+                $this->deleteApiKey();
+                $apiKey = $this->getApiKey();
+                
+                Configuration::updateValue('HH_INSTANCE_URL', null);
+                $instanceUrl = null;
+            }
+        }
         
         if($instanceUrl) {
-            return '<div class="alert alert-success"><strong>Congratulations!</strong> ' . $this->trans('Your module is now integrated with <a href="%url%" target="_blank">%url%</a>.', array('%url%' => $instanceUrl), 'Modules.HelloHarel.Admin') . '</div>';
+            return $this->app->render('module:helloharel/views/templates/admin/config/config.tpl', array(
+                'action' => $action,
+                'post' => json_encode($_POST),
+                'instanceUrl' => $instanceUrl,
+                'references' => array(
+                    'products' => HelloHarelReference::countReferences('product'),
+                    'customers' => HelloHarelReference::countReferences('customer'),
+                    'orders' => HelloHarelReference::countReferences('order'),
+                ),
+            ));
         } else {
-            return '
-                <div class="alert alert-success"><strong>Congratulations!</strong> You are only one last step away from integrating Hello Harel into PrestaShop.</div>
-                <p>To activate the integration, go to your Hello Harel instance:</p>
-                <ol class="breadcrumb">
-                    <li>Administration</li>
-                    <li>External applications</li>
-                    <li>PrestaShop</li>
-                    <li>App settings</li>
-                </ol>
-                <p>and copy the following information:</p>
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="control-label col-md-4">PrestaShop URL</label>
-                        <div class="controls col-md-8">
-                            <div class="input-group">
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default copy-to-clipboard"><i class="icon-copy"></i></button>
-                                </span>
-                                <input type="text" readonly class="form-control" value="' . _PS_BASE_URL_ . __PS_BASE_URI__ . '" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-4">API key</label>
-                        <div class="controls col-md-8">
-                            <div class="input-group">
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default copy-to-clipboard"><i class="icon-copy"></i></button>
-                                </span>
-                                <input type="text" readonly class="form-control" value="' . $apiKey->key . '" />
-                            </div>
-                        </div>
-                    </div>
-                    <a class="btn btn-success pull-right" href=""><i class="icon-check"></i> It\'s done!</a>
-                </div>
-                <script>
-                $(document).ready(function() {
-                    $(".copy-to-clipboard").click(function() {
-                        let value = $(this).closest(".input-group").find("input").val();
-                        const el = document.createElement("textarea");
-                        el.value = value;
-                        document.body.appendChild(el);
-                        el.select();
-                        document.execCommand("copy");
-                        document.body.removeChild(el);
-                    });
-                });
-                </script>
-            ';
+            return $this->app->render('module:helloharel/views/templates/admin/config/wizard.tpl', array(
+                'action' => $action,
+                'prestashopUrl' => _PS_BASE_URL_ . __PS_BASE_URI__,
+                'apiKey' => $apiKey->key,
+            ));
         }
 
         return $output;

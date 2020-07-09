@@ -9,19 +9,19 @@ abstract class AbstractManager
 {
     const HOOKS = array();
     
-    private $app;
+    protected $app;
     
     public function __construct($app)
     {
         $this->app = $app;
     }
     
-    public function install($app)
+    public function install()
     {
         return true;
     }
     
-    public function uninstall($app)
+    public function uninstall()
     {
         return true;
     }
