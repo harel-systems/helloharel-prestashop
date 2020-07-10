@@ -78,6 +78,90 @@
                 <source>External applications</source>
                 <target>External applications</target>
             </trans-unit>
+            <trans-unit id="20">
+                <source>Open the PrestaShop app from the list</source>
+                <target>Open the PrestaShop app from the list</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>Click the "Activate app" button</source>
+                <target>Click the "Activate app" button</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>Go to the "App settings" tab from the PrestaShop modal</source>
+                <target>Go to the "App settings" tab from the PrestaShop modal</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>And copy the following information in the form:</source>
+                <target>And copy the following information in the form:</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>PrestaShop URL</source>
+                <target>PrestaShop URL</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>Copy to clipboard</source>
+                <target>Copy to clipboard</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>API key</source>
+                <target>API key</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>Click the "Save options" button.</source>
+                <target>Click the "Save options" button.</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>It's done!</source>
+                <target>It's done!</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>Are you sure you want to unlink PrestaShop from your Hello Harel instance?</source>
+                <target>Are you sure you want to unlink PrestaShop from your Hello Harel instance?</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>Your mapping (products, customers, orders) will be kept if you want to link them again later.</source>
+                <target>Your mapping (products, customers, orders) will be kept if you want to link them again later.</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>Cancel</source>
+                <target>Cancel</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>Confirm</source>
+                <target>Confirm</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>Go to your instance</source>
+                <target>Go to your instance</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>Congratulations!</source>
+                <target>Congratulations!</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>This PrestaShop instance is now controlled by %instanceUrl%.</source>
+                <target>This PrestaShop instance is now controlled by %instanceUrl%.</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>Your Hello Harel instance now controls PrestaShop. This is an overview of the mapping between PrestaShop and Hello Harel:</source>
+                <target>Your Hello Harel instance now controls PrestaShop. This is an overview of the mapping between PrestaShop and Hello Harel:</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>%count% product(s)</source>
+                <target>%count% product(s)</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>%count% customer(s)</source>
+                <target>%count% customer(s)</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>%count% order(s)</source>
+                <target>%count% order(s)</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>Unlink instance</source>
+                <target>Unlink instance</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
