@@ -75,92 +75,92 @@
         <target>Administration</target>
       </trans-unit>
       <trans-unit id="19">
-          <source>External applications</source>
-          <target>External applications</target>
+        <source>External applications</source>
+        <target>Applications externes</target>
       </trans-unit>
       <trans-unit id="20">
-          <source>Open the PrestaShop app from the list</source>
-          <target>Open the PrestaShop app from the list</target>
+        <source>Open the PrestaShop app from the list</source>
+        <target>Ouvrir l'application PrestaShop dans la liste des applications externes</target>
       </trans-unit>
       <trans-unit id="21">
-          <source>Click the "Activate app" button</source>
-          <target>Click the "Activate app" button</target>
+        <source>Click the "Activate app" button</source>
+        <target>Cliquer sur le bouton "Activer l'application"</target>
       </trans-unit>
       <trans-unit id="22">
-          <source>Go to the "App settings" tab from the PrestaShop modal</source>
-          <target>Go to the "App settings" tab from the PrestaShop modal</target>
+        <source>Go to the "App settings" tab from the PrestaShop modal</source>
+        <target>Ouvrir l'onglet "Configuration de l'application" du modal PrestaShop</target>
       </trans-unit>
       <trans-unit id="23">
-          <source>And copy the following information in the form:</source>
-          <target>And copy the following information in the form:</target>
+        <source>And copy the following information in the form:</source>
+        <target>Et copier les informations suivantes dans le formulaire :</target>
       </trans-unit>
       <trans-unit id="24">
-          <source>PrestaShop URL</source>
-          <target>PrestaShop URL</target>
+        <source>PrestaShop URL</source>
+        <target>URL de PrestaShop</target>
       </trans-unit>
       <trans-unit id="25">
-          <source>Copy to clipboard</source>
-          <target>Copy to clipboard</target>
+        <source>Copy to clipboard</source>
+        <target>Copier dans le presse-papier</target>
       </trans-unit>
       <trans-unit id="26">
-          <source>API key</source>
-          <target>API key</target>
+        <source>API key</source>
+        <target>Clé API</target>
       </trans-unit>
       <trans-unit id="27">
-          <source>Click the "Save options" button.</source>
-          <target>Click the "Save options" button.</target>
+        <source>Click the "Save options" button.</source>
+        <target>Cliquer sur le bouton "Enregistrer les options".</target>
       </trans-unit>
       <trans-unit id="28">
-          <source>It's done!</source>
-          <target>It's done!</target>
+        <source>It's done!</source>
+        <target>C'est fait !</target>
       </trans-unit>
       <trans-unit id="29">
-          <source>Are you sure you want to unlink PrestaShop from your Hello Harel instance?</source>
-          <target>Are you sure you want to unlink PrestaShop from your Hello Harel instance?</target>
+        <source>Are you sure you want to unlink PrestaShop from your Hello Harel instance?</source>
+        <target>Êtes-vous sûr de vouloir délier PrestaShop de votre instance Hello Harel ?</target>
       </trans-unit>
       <trans-unit id="30">
-          <source>Your mapping (products, customers, orders) will be kept if you want to link them again later.</source>
-          <target>Your mapping (products, customers, orders) will be kept if you want to link them again later.</target>
+        <source>Your mapping (products, customers, orders) will be kept if you want to link them again later.</source>
+        <target>La correspondance des produits, clients et commandes sera conservée si vous souhaitez les relier à nouveau.</target>
       </trans-unit>
       <trans-unit id="31">
-          <source>Cancel</source>
-          <target>Cancel</target>
+        <source>Cancel</source>
+        <target>Annuler</target>
       </trans-unit>
       <trans-unit id="32">
-          <source>Confirm</source>
-          <target>Confirm</target>
+        <source>Confirm</source>
+        <target>Confirmer</target>
       </trans-unit>
       <trans-unit id="33">
-          <source>Go to your instance</source>
-          <target>Go to your instance</target>
+        <source>Go to your instance</source>
+        <target>Aller dans votre instance</target>
       </trans-unit>
       <trans-unit id="34">
-          <source>Congratulations!</source>
-          <target>Congratulations!</target>
+        <source>Congratulations!</source>
+        <target>Félicitations !</target>
       </trans-unit>
       <trans-unit id="35">
-          <source>This PrestaShop instance is now controlled by %instanceUrl%.</source>
-          <target>This PrestaShop instance is now controlled by %instanceUrl%.</target>
+        <source>This PrestaShop instance is now controlled by %instanceUrl%.</source>
+        <target>Cette boutique PrestaShop est maintenant contrôlée par %instanceUrl%.</target>
       </trans-unit>
       <trans-unit id="36">
-          <source>Your Hello Harel instance now controls PrestaShop. This is an overview of the mapping between PrestaShop and Hello Harel:</source>
-          <target>Your Hello Harel instance now controls PrestaShop. This is an overview of the mapping between PrestaShop and Hello Harel:</target>
+        <source>Your Hello Harel instance now controls PrestaShop. This is an overview of the mapping between PrestaShop and Hello Harel:</source>
+        <target>Hello Harel contrôle maintenant votre boutique PrestaShop. Voici une vue d'ensemble des correspondances entre PrestaShop et Hello Harel :</target>
       </trans-unit>
       <trans-unit id="37">
-          <source>%count% product(s)</source>
-          <target>%count% product(s)</target>
+        <source>%count% product(s)</source>
+        <target>%count% produit(s)</target>
       </trans-unit>
       <trans-unit id="38">
-          <source>%count% customer(s)</source>
-          <target>%count% customer(s)</target>
+        <source>%count% customer(s)</source>
+        <target>%count% client(s)</target>
       </trans-unit>
       <trans-unit id="39">
-          <source>%count% order(s)</source>
-          <target>%count% order(s)</target>
+        <source>%count% order(s)</source>
+        <target>%count% commande(s)</target>
       </trans-unit>
       <trans-unit id="40">
-          <source>Unlink instance</source>
-          <target>Unlink instance</target>
+        <source>Unlink instance</source>
+        <target>Délier les instances</target>
       </trans-unit>
     </body>
   </file>
