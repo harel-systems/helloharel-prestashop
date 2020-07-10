@@ -60,8 +60,8 @@ class TranslationManager extends AbstractManager
                 foreach($xmldata->file->body->children() as $unit) {
                     $result = Db::getInstance()->insert('translation', array(
                         'id_lang' => (int)$langId,
-                        'key' => (string)$unit->source,
-                        'translation' => (string)$unit->target,
+                        'key' => addslashes((string)$unit->source),
+                        'translation' => addslashes((string)$unit->target),
                         'domain' => self::DOMAIN,
                     ));
                     
