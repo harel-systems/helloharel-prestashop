@@ -11,7 +11,7 @@ class ConfigManager extends AbstractManager
     public function install()
     {
         if(!Configuration::updateValue('PS_WEBSERVICE', 'true')) {
-            $app->_errors[] = 'Could not activate web service';
+            $this->app->_errors[] = 'Could not activate web service';
             return false;
         }
         return true;
@@ -31,7 +31,7 @@ class ConfigManager extends AbstractManager
         } else {
             $apiKey = new WebserviceKey();
             $apiKey->key = md5(random_bytes(10));
-            $apiKey->description = $this->trans('Hello Harel API key', array(), 'Modules.HelloHarel.Admin');
+            $apiKey->description = $this->trans('Hello Harel API key', array(), 'Modules.Helloharel.Admin');
             $apiKey->save();
             Configuration::updateValue('HH_API_KEY', $apiKey->id);
             
@@ -137,6 +137,10 @@ class ConfigManager extends AbstractManager
                 Configuration::updateValue('HH_INSTANCE_URL', null);
                 $instanceUrl = null;
             }
+        }
+        if(isset($_GET['extract_translations'])) {
+            $action['type'] = 'translations';
+            $action['content'] = (new TranslationManager($this->app))->extractTranslations();
         }
         
         if($instanceUrl) {

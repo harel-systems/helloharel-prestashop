@@ -16,7 +16,8 @@ class HelloHarel extends Module
     public function __construct()
     {
         $this->name = 'helloharel';
-        $this->version = '0.0.1';
+        $this->tab = 'administration';
+        $this->version = '1.0.0';
         $this->author = 'Harel Systems SAS';
         $this->need_instance = 0;
         
@@ -24,9 +25,9 @@ class HelloHarel extends Module
         
         parent::__construct();
         
-        $this->displayName = $this->trans('Hello Harel integration', array(), 'Modules.HelloHarel.Admin');
+        $this->displayName = $this->trans('Hello Harel integration', array(), 'Modules.Helloharel.Admin');
         
-        $this->description = $this->trans('Hello Harel ERP integration', array(), 'Modules.HelloHarel.Admin');
+        $this->description = $this->trans('Hello Harel ERP integration', array(), 'Modules.Helloharel.Admin');
         
         $this->ps_versions_compliancy = array(
             'min' => '1.7.6.0',

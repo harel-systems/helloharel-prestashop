@@ -20,40 +20,40 @@
 <div class="helloharel">
     {if $action.type eq 'unlink'}
         <div class="alert alert-success">
-            {l s='Hello Harel and PrestaShop have been successfully unlinked!' mod='Modules.HelloHarel.Admin'}
+            {l s='Hello Harel and PrestaShop have been successfully unlinked!' d='Modules.Helloharel.Admin'}
         </div>
     {else}
         <div class="alert alert-info">
-            {l s='You are only one last step away from integrating Hello Harel with PrestaShop!' mod='Modules.HelloHarel.Admin'}
+            {l s='You are only one last step away from integrating Hello Harel with PrestaShop!' d='Modules.Helloharel.Admin'}
         </div>
     {/if}
 
     <div class="well">
-        <p>{l s='To activate the integration:' mod='Modules.HelloHarel.Admin'}</p>
+        <p>{l s='To activate the integration:' d='Modules.Helloharel.Admin'}</p>
         <ol>
             <li>
-                {l s='Go to your Hello Harel instance and navigate to:' mod='Modules.HelloHarel.Admin'}
+                {l s='Go to your Hello Harel instance and navigate to:' d='Modules.Helloharel.Admin'}
                 <ol class="breadcrumb">
-                    <li>{l s='Administration' mod='Modules.HelloHarel.Admin'}</li>
-                    <li>{l s='External applications' mod='Modules.HelloHarel.Admin'}</li>
+                    <li>{l s='Administration' d='Modules.Helloharel.Admin'}</li>
+                    <li>{l s='External applications' d='Modules.Helloharel.Admin'}</li>
                 </ol>
             </li>
             
-            <li>{l s='Open the PrestaShop app from the list' mod='Modules.HelloHarel.Admin'}</li>
+            <li>{l s='Open the PrestaShop app from the list' d='Modules.Helloharel.Admin'}</li>
             
-            <li>{l s='Click the "Activate app" button' mod='Modules.HelloHarel.Admin'}</li>
+            <li>{l s='Click the "Activate app" button' d='Modules.Helloharel.Admin'}</li>
             
-            <li>{l s='Go to the "App settings" tab from the PrestaShop modal' mod='Modules.HelloHarel.Admin'}</li>
+            <li>{l s='Go to the "App settings" tab from the PrestaShop modal' d='Modules.Helloharel.Admin'}</li>
             
             <li>
-                {l s='And copy the following information in the form:' mod='Modules.HelloHarel.Admin'}
+                {l s='And copy the following information in the form:' d='Modules.Helloharel.Admin'}
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <label class="control-label col-md-3">{l s='PrestaShop URL' mod='Modules.HelloHarel.Admin'}</label>
+                        <label class="control-label col-md-3">{l s='PrestaShop URL' d='Modules.Helloharel.Admin'}</label>
                         <div class="controls col-md-6">
                             <div class="input-group">
                                 <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default copy-to-clipboard" title="{l s='Copy to clipboard' mod='Modules.HelloHarel.Admin'}">
+                                    <button type="button" class="btn btn-default copy-to-clipboard" title="{l s='Copy to clipboard' d='Modules.Helloharel.Admin'}">
                                         <i class="icon-copy"></i>
                                     </button>
                                 </span>
@@ -62,11 +62,11 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-3">{l s='API key' mod='Modules.HelloHarel.Admin'}</label>
+                        <label class="control-label col-md-3">{l s='API key' d='Modules.Helloharel.Admin'}</label>
                         <div class="controls col-md-6">
                             <div class="input-group">
                                 <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default copy-to-clipboard" title="{l s='Copy to clipboard' mod='Modules.HelloHarel.Admin'}">
+                                    <button type="button" class="btn btn-default copy-to-clipboard" title="{l s='Copy to clipboard' d='Modules.Helloharel.Admin'}">
                                         <i class="icon-copy"></i>
                                     </button>
                                 </span>
@@ -77,11 +77,11 @@
                 </div>
             </li>
             
-            <li>{l s='Click the "Save options" button.' mod='Modules.HelloHarel.Admin'}</li>
+            <li>{l s='Click the "Save options" button.' d='Modules.Helloharel.Admin'}</li>
         </ol>
         
         <div class="text-right">
-            <a class="btn btn-success" href=""><i class="icon-check"></i> {l s='It\'s done!' mod='Modules.HelloHarel.Admin'}</a>
+            <a class="btn btn-success" href=""><i class="icon-check"></i> {l s='It\'s done!' d='Modules.Helloharel.Admin'}</a>
         </div>
     </div>
 </div>

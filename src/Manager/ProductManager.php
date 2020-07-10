@@ -26,7 +26,7 @@ class ProductManager extends AbstractManager
             switch(Context::getContext()->controller->php_self) {
                 case 'AdminProducts':
                     return "<script>
-                    $('#page-header-desc-configuration-add').replaceWith('<a href=\"#\" class=\"btn btn-primary pointer disabled\">" . $this->trans('Products are managed by Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>');
+                    $('#page-header-desc-configuration-add').replaceWith('<a href=\"#\" class=\"btn btn-primary pointer disabled\">" . $this->trans('Products are managed by Hello Harel', array(), 'Modules.Helloharel.Admin') . "</a>');
                     </script>";
             }
         }
@@ -46,8 +46,8 @@ class ProductManager extends AbstractManager
         if($instanceUrl && $reference !== null) {
             return "
             <div class=\"alert alert-info\">
-                <a href=\"$instanceUrl/products/products/by_reference/{$params['id_product']}#config\" class=\"btn btn-primary float-right\"><i class=\"material-icons\">edit</i> " . $this->trans('View on Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>
-                " . $this->trans('This product is managed by Hello Harel.', array(), 'Modules.HelloHarel.Admin') . "
+                <a href=\"$instanceUrl/products/products/by_reference/{$params['id_product']}#config\" class=\"btn btn-primary float-right\"><i class=\"material-icons\">edit</i> " . $this->trans('View on Hello Harel', array(), 'Modules.Helloharel.Admin') . "</a>
+                " . $this->trans('This product is managed by Hello Harel.', array(), 'Modules.Helloharel.Admin') . "
             </div>
             <style>
                 .tabs.js-tabs, #step2, #step3, #step4, #step5, #step6,

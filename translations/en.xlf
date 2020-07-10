@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file date="2020-07-08T11:33:52Z" source-language="en" target-language="en" datatype="plaintext" original="not.available">
+        <body>
+            <trans-unit>
+                <source>Hello Harel ERP integration</source>
+                <target>Hello Harel ERP integration</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Payment received</source>
+                <target>Payment received</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Order validated</source>
+                <target>Order validated</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Shipped</source>
+                <target>Shipped</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Delivered</source>
+                <target>Delivered</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Cancelled</source>
+                <target>Cancelled</target>
+            </trans-unit>
+            <trans-unit>
+                <source>View on Hello Harel</source>
+                <target>View on Hello Harel</target>
+            </trans-unit>
+            <trans-unit>
+                <source>This order is managed by Hello Harel.</source>
+                <target>This order is managed by Hello Harel.</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Download your invoice</source>
+                <target>Download your invoice</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Products are managed by Hello Harel</source>
+                <target>Products are managed by Hello Harel</target>
+            </trans-unit>
+            <trans-unit>
+                <source>This product is managed by Hello Harel.</source>
+                <target>This product is managed by Hello Harel.</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Hello Harel API key</source>
+                <target>Hello Harel API key</target>
+            </trans-unit>
+            <trans-unit>
+                <source>PrestaShop voucher</source>
+                <target>PrestaShop voucher</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Hello Harel and PrestaShop have been successfully unlinked!</source>
+                <target>Hello Harel and PrestaShop have been successfully unlinked!</target>
+            </trans-unit>
+            <trans-unit>
+                <source>You are only one last step away from integrating Hello Harel with PrestaShop!</source>
+                <target>You are only one last step away from integrating Hello Harel with PrestaShop!</target>
+            </trans-unit>
+            <trans-unit>
+                <source>To activate the integration:</source>
+                <target>To activate the integration:</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Go to your Hello Harel instance and navigate to:</source>
+                <target>Go to your Hello Harel instance and navigate to:</target>
+            </trans-unit>
+            <trans-unit>
+                <source>Administration</source>
+                <target>Administration</target>
+            </trans-unit>
+            <trans-unit>
+                <source>External applications</source>
+                <target>External applications</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

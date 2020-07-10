@@ -52,7 +52,7 @@ class OrderManager extends AbstractManager
         $paymentReceived->name = array();
         $languages = Language::getLanguages(false);
         foreach($languages as $language) {
-            $paymentReceived->name[$language['id_lang']] = $this->trans('Payment received', array(), 'Modules.HelloHarel.Admin');
+            $paymentReceived->name[$language['id_lang']] = $this->trans('Payment received', array(), 'Modules.Helloharel.Admin');
         }
         $paymentReceived->add();
         $orderStates['payment_received'] = $paymentReceived->id;
@@ -67,7 +67,7 @@ class OrderManager extends AbstractManager
         $orderValidated->name = array();
         $languages = Language::getLanguages(false);
         foreach($languages as $language) {
-            $orderValidated->name[$language['id_lang']] = $this->trans('Order validated', array(), 'Modules.HelloHarel.Admin');
+            $orderValidated->name[$language['id_lang']] = $this->trans('Order validated', array(), 'Modules.Helloharel.Admin');
         }
         $orderValidated->add();
         $orderStates['order_validated'] = $orderValidated->id;
@@ -83,7 +83,7 @@ class OrderManager extends AbstractManager
         $shipped->name = array();
         $languages = Language::getLanguages(false);
         foreach($languages as $language) {
-            $shipped->name[$language['id_lang']] = $this->trans('Shipped', array(), 'Modules.HelloHarel.Admin');
+            $shipped->name[$language['id_lang']] = $this->trans('Shipped', array(), 'Modules.Helloharel.Admin');
         }
         $shipped->add();
         $orderStates['shipped'] = $shipped->id;
@@ -97,7 +97,7 @@ class OrderManager extends AbstractManager
         $delivered->name = array();
         $languages = Language::getLanguages(false);
         foreach($languages as $language) {
-            $delivered->name[$language['id_lang']] = $this->trans('Delivered', array(), 'Modules.HelloHarel.Admin');
+            $delivered->name[$language['id_lang']] = $this->trans('Delivered', array(), 'Modules.Helloharel.Admin');
         }
         $delivered->add();
         $orderStates['delivered'] = $delivered->id;
@@ -111,7 +111,7 @@ class OrderManager extends AbstractManager
         $cancelled->name = array();
         $languages = Language::getLanguages(false);
         foreach($languages as $language) {
-            $cancelled->name[$language['id_lang']] = $this->trans('Cancelled', array(), 'Modules.HelloHarel.Admin');
+            $cancelled->name[$language['id_lang']] = $this->trans('Cancelled', array(), 'Modules.Helloharel.Admin');
         }
         $cancelled->add();
         $orderStates['cancelled'] = $cancelled->id;
@@ -197,7 +197,7 @@ class OrderManager extends AbstractManager
         $vouchers = [];
         if($order->total_discounts_tax_incl) {
             $vouchers[] = array(
-                'description' => $this->trans('PrestaShop voucher', array(), 'Modules.HelloHarel.Order'),
+                'description' => $this->trans('PrestaShop voucher', array(), 'Modules.Helloharel.Admin'),
                 'taxedAmount' => $order->total_discounts_tax_incl,
             );
         }
@@ -285,8 +285,8 @@ class OrderManager extends AbstractManager
         if($instanceUrl && $reference !== null) {
             return "
             <div class=\"alert alert-info\">
-                <a href=\"$instanceUrl/sales/orders/by_reference/ordering.prestashop/{$order->id}\" class=\"btn btn-primary pull-right\"><i class=\"material-icons\">edit</i> " . $this->trans('View on Hello Harel', array(), 'Modules.HelloHarel.Admin') . "</a>
-                " . $this->trans('This order is managed by Hello Harel.', array(), 'Modules.HelloHarel.Admin') . "
+                <a href=\"$instanceUrl/sales/orders/by_reference/ordering.prestashop/{$order->id}\" class=\"btn btn-primary pull-right\"><i class=\"material-icons\">edit</i> " . $this->trans('View on Hello Harel', array(), 'Modules.Helloharel.Admin') . "</a>
+                " . $this->trans('This order is managed by Hello Harel.', array(), 'Modules.Helloharel.Admin') . "
             </div>
             <div class=\"text-center\">
                 <button class=\"btn btn-default\" id=\"hh_takeover\">Take over!</button>
@@ -339,7 +339,7 @@ class OrderManager extends AbstractManager
         if($instanceUrl && $reference !== null) {
             return "
             <a class=\"box\" style=\"display: block; text-align: center;\" href=\"$instanceUrl/public/invoice/$reference/download\">
-                <i class=\"material-icons\">cloud_download</i> " . $this->trans('Download your invoice', array(), 'Modules.HelloHarel.Admin') . "
+                <i class=\"material-icons\">cloud_download</i> " . $this->trans('Download your invoice', array(), 'Modules.Helloharel.Admin') . "
             </a>
             <style>
             #order-infos .box:nth-child(2) a {
