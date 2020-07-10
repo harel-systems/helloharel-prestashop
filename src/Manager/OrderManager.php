@@ -221,9 +221,6 @@ class OrderManager extends AbstractManager
             );
         }
         
-        error_log($carrier->name);
-        error_log($order->total_shipping_tax_excl . ' ' . $order->total_shipping_tax_incl);
-        
         $response = $this->getHttpClient()->request('POST', $instanceUrl . '/api/v1/orders', array(
             'json' => array(
                 'externalId' => $order->id,
