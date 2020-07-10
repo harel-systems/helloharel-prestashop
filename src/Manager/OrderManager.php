@@ -20,6 +20,7 @@
 namespace HelloHarel\Manager;
 
 use Address;
+use Carrier;
 use Configuration;
 use Country;
 use CustomerThread;
@@ -167,6 +168,7 @@ class OrderManager extends AbstractManager
         $customer = $params['customer'];
         $deliveryAddress = new Address($order->id_address_delivery);
         $invoicingAddress = new Address($order->id_address_invoice);
+        $carrier = new Carrier($order->id_carrier);
         
         $managedProducts = array_map('current', Db::getInstance()->executeS('SELECT ps_id FROM ' . _DB_PREFIX_ . 'helloharel_references WHERE object_type = "product"'));
         
@@ -219,6 +221,9 @@ class OrderManager extends AbstractManager
             );
         }
         
+        error_log($carrier->name);
+        error_log($order->total_shipping_tax_excl . ' ' . $order->total_shipping_tax_incl);
+        
         $response = $this->getHttpClient()->request('POST', $instanceUrl . '/api/v1/orders', array(
             'json' => array(
                 'externalId' => $order->id,
@@ -252,7 +257,9 @@ class OrderManager extends AbstractManager
                 ),
                 'shippingMethod' => array(
                     'externalReference' => $order->id_carrier,
+                    'name' => $carrier->name,
                     'price' => $order->total_shipping_tax_excl,
+                    'vatRate' => $order->total_shipping_tax_excl ? round(($order->total_shipping_tax_incl / $order->total_shipping_tax_excl - 1) * 100, 2) : null,
                 ),
                 'expectedDeliveryDate' => $expectedDeliveryDate,
                 'comment' => html_entity_decode($params['order']->getFirstMessage(), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
