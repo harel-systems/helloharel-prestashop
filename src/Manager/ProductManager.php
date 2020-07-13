@@ -105,7 +105,7 @@ class ProductManager extends AbstractManager
             </style>
             <script>
             $(document).ready(function() {
-                $('#form_step1_name_1').prop('disabled', true);
+                $('#form_step1_name_1').prop('readonly', true);
                 $('#form_step2_price').closest('.col-xl-2').hide();
                 $('#form_step2_price_ttc').closest('.col-xl-2').hide();
                 $('#form_step2_unit_price').closest('.mx-auto').removeClass('mx-auto');
