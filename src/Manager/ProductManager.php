@@ -67,6 +67,7 @@ class ProductManager extends AbstractManager
             return "
             <style>
                 #step1, #tab_step1,
+                #step3, #tab_step3,
                 #step5, #tab_step5,
                 #step6, #tab_step6,
                 #hooks, #tab_hooks,
@@ -105,7 +106,7 @@ class ProductManager extends AbstractManager
             <script>
             $(document).ready(function() {
                 if($('#form-nav .nav-link.active:visible').length === 0) {
-                    $('#tab_step3').tab('show');
+                    $('#tab_step4').tab('show');
                 }
                 $('#form_step1_name_1').prop('readonly', true);
                 $('#form_step2_price').closest('.col-xl-2').hide();
