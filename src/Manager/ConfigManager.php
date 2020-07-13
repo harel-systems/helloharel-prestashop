@@ -28,8 +28,7 @@ class ConfigManager extends AbstractManager
     public function install()
     {
         if(!Configuration::updateValue('PS_WEBSERVICE', 'true')) {
-            $this->app->_errors[] = 'Could not activate web service';
-            return false;
+            return 'Could not activate web service';
         }
         return true;
     }
@@ -39,6 +38,7 @@ class ConfigManager extends AbstractManager
         $this->deleteApiKey();
         Configuration::deleteByName('HH_INSTANCE_KEY');
         Configuration::deleteByName('HH_INSTANCE_URL');
+        return true;
     }
     
     private function getApiKey()

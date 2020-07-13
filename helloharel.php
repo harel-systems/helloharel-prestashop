@@ -24,6 +24,8 @@ if(!defined('_PS_VERSION_')) {
 use HelloHarel\Entity\HelloHarelReference;
 use HelloHarel\Manager;
 
+require_once __DIR__.'/vendor/autoload.php';
+
 include_once(_PS_MODULE_DIR_ . 'helloharel/classes/WebserviceSpecificManagementHelloharel.php');
 
 class HelloHarel extends Module
@@ -58,6 +60,7 @@ class HelloHarel extends Module
             'product' => new Manager\ProductManager($this),
             'payment' => new Manager\PaymentManager($this),
             'customer' => new Manager\CustomerManager($this),
+            'translation' => new Manager\TranslationManager($this),
         );
     }
     
@@ -77,8 +80,17 @@ class HelloHarel extends Module
         if(!parent::install() || !$this->registerHook(['addWebserviceResources'])) {
             return false;
         }
-        foreach($this->managers as $manager) {
-            if(!$this->registerHooks(array_keys($manager::HOOKS)) || !$manager->install($this)) {
+        foreach($this->managers as $key => $manager) {
+            foreach($manager::HOOKS as $hook => $method) {
+                error_log('Registering hook ' . $hook . ' for ' . $key . ' manager');
+                if(!$this->registerHook($hook)) {
+                    $this->_errors[] = 'Could not register hook ' . $hook . ' for ' . $key . ' manager';
+                    return false;
+                }
+            }
+            error_log('Installing ' . $key . ' manager');
+            if(true !== $message = $manager->install()) {
+                $this->_errors[] = $message;
                 return false;
             }
         }
@@ -91,7 +103,9 @@ class HelloHarel extends Module
             return false;
         }
         foreach($this->managers as $manager) {
-            if(!$this->registerHooks(array_keys($manager::HOOKS)) || !$manager->uninstall($this)) {
+            error_log('Uninstalling ' . $key . ' manager');
+            if(true !== $message = $manager->uninstall()) {
+                $this->_errors[] = $message;
                 return false;
             }
         }
@@ -100,6 +114,7 @@ class HelloHarel extends Module
     
     public function __call($name, $arguments)
     {
+        error_log('calling ' . $name);
         if(!Validate::isHookName($name)) {
             return false;
         }

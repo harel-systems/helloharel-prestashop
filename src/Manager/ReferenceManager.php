@@ -34,16 +34,13 @@ class ReferenceManager extends AbstractManager
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;';
 
         if(!Db::getInstance()->execute($query)) {
-            $this->app->_errors[] = 'Could not create reference table';
-            return false;
+            return 'Could not create reference table';
         }
         if(!Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'orders CHANGE `reference` `reference` VARCHAR(255) DEFAULT NULL')) {
-            $this->app->_errors[] = 'Could not fix order reference size';
-            return false;
+            return 'Could not fix order reference size';
         }
         if(!Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'order_payment CHANGE `order_reference` `order_reference` VARCHAR(255) DEFAULT NULL')) {
-            $this->app->_errors[] = 'Could not fix order reference size';
-            return false;
+            return 'Could not fix order reference size';
         }
         
         return true;

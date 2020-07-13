@@ -33,15 +33,9 @@ class TranslationManager extends AbstractManager
     public function install()
     {
         if(!$this->extractTranslations()) {
-            $this->app->_errors[] = 'Could not extract translations';
-            return false;
+            return 'Could not extract translations';
         }
         return true;
-    }
-    
-    public function uninstall()
-    {
-        
     }
     
     public function extractTranslations()

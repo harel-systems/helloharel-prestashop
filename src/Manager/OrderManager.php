@@ -42,19 +42,16 @@ class OrderManager extends AbstractManager
     public function install()
     {
         if(!$this->disableModule('ps_customeraccountlinks')) {
-            $this->app->_errors[] = 'Could not disable ps_customeraccountlinks module';
-            return false;
+            return 'Could not disable ps_customeraccountlinks module';
         }
         
         if(!Configuration::updateValue('PS_ORDER_RETURN', '0')) {
-            $this->app->_errors[] = 'Could not deactivate returns';
-            return false;
+            return 'Could not deactivate returns';
         }
         
         // Remove problematic properties of order states (invoice, delivery)
         if(Db::getInstance()->execute('UPDATE ' . _DB_PREFIX_ . 'order_state SET logable = false, delivery = false, shipped = false, invoice = false, pdf_invoice = false, pdf_delivery = false')) {
-            $this->app->_errors[] = 'Could not fix order states';
-            return false;
+            return 'Could not fix order states';
         }
         
         // Create our order events
@@ -135,8 +132,7 @@ class OrderManager extends AbstractManager
         $orderStates['cancelled'] = $cancelled->id;
         
         if(!Configuration::updateValue('HH_ORDER_STATES', json_encode($orderStates))) {
-            $this->_errors[] = 'Could not set order states configuration';
-            return false;
+            return 'Could not set order states configuration';
         }
         
         return true;
@@ -145,8 +141,7 @@ class OrderManager extends AbstractManager
     public function uninstall()
     {
         if(!Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'order_state WHERE module_name = \'helloharel\'')) {
-            $this->app->_errors[] = 'Could not delete custom order states';
-            return false;
+            return 'Could not delete custom order states';
         }
         return true;
     }
