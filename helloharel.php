@@ -24,7 +24,7 @@ if(!defined('_PS_VERSION_')) {
 use HelloHarel\Entity\HelloHarelReference;
 use HelloHarel\Manager;
 
-require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 include_once(_PS_MODULE_DIR_ . 'helloharel/classes/WebserviceSpecificManagementHelloharel.php');
 
