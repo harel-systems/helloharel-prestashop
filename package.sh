@@ -11,5 +11,6 @@ tar --exclude=".git" \
     --exclude="Jenkinsfile" \
     --exclude="README.md" \
     --exclude="build" \
+    --transform 's,^,helloharel/,' \
     -czf "build/helloharel-prestashop-$VERSION.tar.gz" * || \
     exit 1
