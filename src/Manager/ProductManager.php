@@ -72,8 +72,7 @@ class ProductManager extends AbstractManager
                 #step3, #tab_step3,
                 #step5, #tab_step5,
                 #step6, #tab_step6,
-                #hooks, #tab_hooks,
-                .product-footer
+                #hooks, #tab_hooks
                 {
                     display: none!important;
                 }
