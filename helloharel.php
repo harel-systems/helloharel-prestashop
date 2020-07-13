@@ -36,7 +36,7 @@ class HelloHarel extends Module
     {
         $this->name = 'helloharel';
         $this->tab = 'administration';
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->author = 'Harel Systems SAS';
         $this->need_instance = 0;
         
@@ -82,13 +82,13 @@ class HelloHarel extends Module
         }
         foreach($this->managers as $key => $manager) {
             foreach($manager::HOOKS as $hook => $method) {
-                error_log('Registering hook ' . $hook . ' for ' . $key . ' manager');
+                error_log('[DEBUG] Registering hook ' . $hook . ' for ' . $key . ' manager');
                 if(!$this->registerHook($hook)) {
                     $this->_errors[] = 'Could not register hook ' . $hook . ' for ' . $key . ' manager';
                     return false;
                 }
             }
-            error_log('Installing ' . $key . ' manager');
+            error_log('[DEBUG] Installing ' . $key . ' manager');
             if(true !== $message = $manager->install()) {
                 $this->_errors[] = $message;
                 return false;
@@ -103,7 +103,7 @@ class HelloHarel extends Module
             return false;
         }
         foreach($this->managers as $manager) {
-            error_log('Uninstalling ' . $key . ' manager');
+            error_log('[DEBUG] Uninstalling ' . $key . ' manager');
             if(true !== $message = $manager->uninstall()) {
                 $this->_errors[] = $message;
                 return false;
@@ -114,7 +114,6 @@ class HelloHarel extends Module
     
     public function __call($name, $arguments)
     {
-        error_log('calling ' . $name);
         if(!Validate::isHookName($name)) {
             return false;
         }
