@@ -114,6 +114,7 @@ class ProductManager extends AbstractManager
                 $('#form_step2_on_sale').closest('.col-md-12').hide();
                 $('#form_step2_id_tax_rules_group').closest('.col-md-12').hide();
                 $('#form_step2_wholesale_price').closest('.col-md-12').hide();
+                $('.product-header > .row').append('<div class=\"col-xxl-10\"><div class=\"alert alert-info\" style=\"margin-top: 20px; margin-bottom: 0;\"><a href=\"$instanceUrl/products/products/by_reference/{$params['id_product']}#config\" class=\"btn btn-primary float-right\"><i class=\"material-icons\">edit</i> " . str_replace("'", "\'", $this->trans('View on Hello Harel', array(), 'Modules.Helloharel.Admin') . "</a>" . $this->trans('This product is managed by Hello Harel.', array(), 'Modules.Helloharel.Admin')) . "</div></div>');
             });
             </script>
             ";
