@@ -45,7 +45,6 @@ class ProductManager extends AbstractManager
                     return "<script>
                     $(document).ready(function() {
                         $('#page-header-desc-configuration-add').replaceWith('<a href=\"#\" class=\"btn btn-primary pointer disabled\">" . str_replace("'", "\'", $this->trans('Products are managed by Hello Harel', array(), 'Modules.Helloharel.Admin')) . "</a>');
-                        $('.product-header > .row').append('<div class=\"col-xxl-10\"><div class=\"alert alert-info\" style=\"margin-top: 20px; margin-bottom: 0;\"><a href=\"$instanceUrl/products/products/by_reference/{$params['id_product']}#config\" class=\"btn btn-primary float-right\"><i class=\"material-icons\">edit</i> " . str_replace("'", "\'", $this->trans('View on Hello Harel', array(), 'Modules.Helloharel.Admin') . "</a>" . $this->trans('This product is managed by Hello Harel.', array(), 'Modules.Helloharel.Admin')) . "</div></div>');
                     });
                     </script>";
                     //"
