@@ -43,8 +43,12 @@ class ProductManager extends AbstractManager
             switch(Context::getContext()->controller->php_self) {
                 case 'AdminProducts':
                     return "<script>
-                    $('#page-header-desc-configuration-add').replaceWith('<a href=\"#\" class=\"btn btn-primary pointer disabled\">" . $this->trans('Products are managed by Hello Harel', array(), 'Modules.Helloharel.Admin') . "</a>');
+                    $(document).ready(function() {
+                        $('#page-header-desc-configuration-add').replaceWith('<a href=\"#\" class=\"btn btn-primary pointer disabled\">" . str_replace("'", "\'", $this->trans('Products are managed by Hello Harel', array(), 'Modules.Helloharel.Admin')) . "</a>');
+                        $('.product-header > .row').append('<div class=\"col-xxl-10\"><div class=\"alert alert-info\" style=\"margin-top: 20px; margin-bottom: 0;\"><a href=\"$instanceUrl/products/products/by_reference/{$params['id_product']}#config\" class=\"btn btn-primary float-right\"><i class=\"material-icons\">edit</i> " . str_replace("'", "\'", $this->trans('View on Hello Harel', array(), 'Modules.Helloharel.Admin') . "</a>" . $this->trans('This product is managed by Hello Harel.', array(), 'Modules.Helloharel.Admin')) . "</div></div>');
+                    });
                     </script>";
+                    //"
             }
         }
     }
@@ -62,14 +66,14 @@ class ProductManager extends AbstractManager
         
         if($instanceUrl && $reference !== null) {
             return "
-            <div class=\"alert alert-info\">
-                <a href=\"$instanceUrl/products/products/by_reference/{$params['id_product']}#config\" class=\"btn btn-primary float-right\"><i class=\"material-icons\">edit</i> " . $this->trans('View on Hello Harel', array(), 'Modules.Helloharel.Admin') . "</a>
-                " . $this->trans('This product is managed by Hello Harel.', array(), 'Modules.Helloharel.Admin') . "
-            </div>
+            
             <style>
-                .tabs.js-tabs, #step2, #step3, #step4, #step5, #step6,
-                #product-images-container, .summary-description-container, #features, #manufacturer, #related-product,
-                .right-column, .product-footer, #hooks
+                #step1, #tab_step1,
+                #step3, #tab_step3,
+                #step5, #tab_step5,
+                #step6, #tab_step6,
+                #hooks, #tab_hooks,
+                .product-footer
                 {
                     display: none!important;
                 }
@@ -90,10 +94,14 @@ class ProductManager extends AbstractManager
                     position: relative;
                     top: -9px;
                 }
+                #form_step1_name_1 {
+                    border: none;
+                    background: transparent;
+                }
             });
             </style>
             <script>
-            $('input').prop('disabled', true);
+            $('#form_step1_name_1').prop('disabled', true);
             </script>
             ";
         }
