@@ -45,4 +45,12 @@ class ReferenceManager extends AbstractManager
         
         return true;
     }
+    
+    public function dropReferences()
+    {
+        if(!Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'helloharel_references`;')) {
+            return 'Could not delete references';
+        }
+        return true;
+    }
 }

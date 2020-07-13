@@ -19,12 +19,9 @@
 
 namespace HelloHarel\Manager;
 
-use Configuration;
 use Db;
 use DbQuery;
 use HelloHarel\Entity\HelloHarelReference;
-use Translation;
-use WebserviceKey;
 
 class TranslationManager extends AbstractManager
 {

@@ -147,9 +147,13 @@ class ConfigManager extends AbstractManager
         if(isset($_POST['unlink_confirm']) || isset($_POST['unlink'])) {
             $action['type'] = 'unlink';
             $action['confirmed'] = isset($_POST['unlink_confirm']);
+            $action['drop_references'] = isset($_POST['drop_references']);
             if($action['confirmed']) {
                 $this->deleteApiKey();
                 $apiKey = $this->getApiKey();
+                if($action['drop_references']) {
+                    $this->app->getManager('reference')->dropReferences();
+                }
                 
                 Configuration::updateValue('HH_INSTANCE_URL', null);
                 $instanceUrl = null;

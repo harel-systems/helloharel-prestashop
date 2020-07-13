@@ -162,6 +162,10 @@
                 <source>Unlink instance</source>
                 <target>Unlink instance</target>
             </trans-unit>
+            <trans-unit id="40">
+                <source>Remove all references (products, orders and customers)</source>
+                <target>Remove all references (products, orders and customers)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -98,13 +98,16 @@ class ProductManager extends AbstractManager
                     border: none;
                     background: transparent;
                 }
-                #step2, #step3, #step4 {
+                .tab-pane {
                     background: #FFF;
                 }
             });
             </style>
             <script>
             $(document).ready(function() {
+                if($('#form-nav .nav-link.active:visible').length === 0) {
+                    $('#tab_step3').tab('show');
+                }
                 $('#form_step1_name_1').prop('readonly', true);
                 $('#form_step2_price').closest('.col-xl-2').hide();
                 $('#form_step2_price_ttc').closest('.col-xl-2').hide();

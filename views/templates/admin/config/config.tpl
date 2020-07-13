@@ -34,6 +34,12 @@
             <div class="alert alert-danger">
                 {l s='Are you sure you want to unlink PrestaShop from your Hello Harel instance?' d='Modules.Helloharel.Admin'}<br />
                 {l s='Your mapping (products, customers, orders) will be kept if you want to link them again later.' d='Modules.Helloharel.Admin'}
+                <div class="checkbox">
+                    <label for="drop_references">
+                        <input type="checkbox" name="drop_references" id="drop_references">
+                        {l s='Remove all references (products, orders and customers)' d='Modules.Helloharel.Admin'}
+                    </label>
+                </div>
                 <div class="text-right">
                     <a class="btn btn-default" href="">
                         {l s='Cancel' d='Modules.Helloharel.Admin'}

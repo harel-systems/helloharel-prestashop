@@ -127,6 +127,11 @@ class HelloHarel extends Module
         }
     }
     
+    public function getManager($key)
+    {
+        return $this->managers[$key];
+    }
+    
     public function hookAddWebserviceResources()
     {
         return array(
