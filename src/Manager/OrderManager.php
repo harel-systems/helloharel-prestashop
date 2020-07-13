@@ -50,7 +50,7 @@ class OrderManager extends AbstractManager
         }
         
         // Remove problematic properties of order states (invoice, delivery)
-        if(Db::getInstance()->execute('UPDATE ' . _DB_PREFIX_ . 'order_state SET logable = false, delivery = false, shipped = false, invoice = false, pdf_invoice = false, pdf_delivery = false')) {
+        if(!Db::getInstance()->execute('UPDATE ' . _DB_PREFIX_ . 'order_state SET logable = false, delivery = false, shipped = false, invoice = false, pdf_invoice = false, pdf_delivery = false')) {
             return 'Could not fix order states';
         }
         

@@ -20,6 +20,7 @@
 namespace HelloHarel\Manager;
 
 use Configuration;
+use Db;
 use Symfony\Component\HttpClient\HttpClient;
 
 abstract class AbstractManager

@@ -90,6 +90,7 @@ class HelloHarel extends Module
             }
             error_log('[DEBUG] Installing ' . $key . ' manager');
             if(true !== $message = $manager->install()) {
+                error_log('[DEBUG] ' . $key . ' manager install failed with message: ' . $message);
                 $this->_errors[] = $message;
                 return false;
             }
@@ -102,9 +103,10 @@ class HelloHarel extends Module
         if(!parent::uninstall() || !$this->registerHook(['addWebserviceResources'])) {
             return false;
         }
-        foreach($this->managers as $manager) {
+        foreach($this->managers as $key => $manager) {
             error_log('[DEBUG] Uninstalling ' . $key . ' manager');
             if(true !== $message = $manager->uninstall()) {
+                error_log('[DEBUG] ' . $key . ' manager uninstall failed with message: ' . $message);
                 $this->_errors[] = $message;
                 return false;
             }
