@@ -68,7 +68,6 @@ class ProductManager extends AbstractManager
             return "
             <style>
                 #step1, #tab_step1,
-                #step3, #tab_step3,
                 #step5, #tab_step5,
                 #step6, #tab_step6,
                 #hooks, #tab_hooks,
@@ -99,19 +98,21 @@ class ProductManager extends AbstractManager
                     border: none;
                     background: transparent;
                 }
-                #step2, #step4 {
+                #step2, #step3, #step4 {
                     background: #FFF;
                 }
             });
             </style>
             <script>
-            $('#form_step1_name_1').prop('disabled', true);
-            $('#form_step2_price').closest('.col-xl-2').hide();
-            $('#form_step2_price_ttc').closest('.col-xl-2').hide();
-            $('#form_step2_unit_price').closest('.mx-auto').removeClass('mx-auto');
-            $('#form_step2_on_sale').closest('.col-md-12').hide();
-            $('#form_step2_id_tax_rules_group').closest('.col-md-12').hide();
-            $('#form_step2_wholesale_price').closest('.col-md-12').hide();
+            $(document).ready(function() {
+                $('#form_step1_name_1').prop('disabled', true);
+                $('#form_step2_price').closest('.col-xl-2').hide();
+                $('#form_step2_price_ttc').closest('.col-xl-2').hide();
+                $('#form_step2_unit_price').closest('.mx-auto').removeClass('mx-auto');
+                $('#form_step2_on_sale').closest('.col-md-12').hide();
+                $('#form_step2_id_tax_rules_group').closest('.col-md-12').hide();
+                $('#form_step2_wholesale_price').closest('.col-md-12').hide();
+            });
             </script>
             ";
         }
