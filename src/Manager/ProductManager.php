@@ -68,7 +68,6 @@ class ProductManager extends AbstractManager
             <style>
                 #step1, #tab_step1,
                 #step3, #tab_step3,
-                #step5, #tab_step5,
                 #step6, #tab_step6,
                 #hooks, #tab_hooks,
                 #product_form_delete_btn,
