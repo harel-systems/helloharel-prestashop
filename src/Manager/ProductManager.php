@@ -106,7 +106,7 @@ class ProductManager extends AbstractManager
             <script>
             $(document).ready(function() {
                 if($('#form-nav .nav-link.active:visible').length === 0) {
-                    $('#tab_step4').tab('show');
+                    $('#tab_step4 a').tab('show');
                 }
                 $('#form_step1_name_1').prop('readonly', true);
                 $('#form_step2_price').closest('.col-xl-2').hide();
