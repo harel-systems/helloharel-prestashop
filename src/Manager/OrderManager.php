@@ -270,14 +270,14 @@ class OrderManager extends AbstractManager
                 $customerReference = new HelloHarelReference();
                 $customerReference->object_type = 'customer';
                 $customerReference->ps_id = $customer->id;
-                $customerReference->hh_id = $_order['contact']['id'];
+                $customerReference->hh_id = (string)$_order['contact']['id'];
                 $customerReference->save();
             }
             if($_order['access_id']) {
                 $orderReference = new HelloHarelReference();
                 $orderReference->object_type = 'order';
                 $orderReference->ps_id = $order->id;
-                $orderReference->hh_id = $_order['access_id'];
+                $orderReference->hh_id = (string)$_order['access_id'];
                 $orderReference->save();
             }
             $order->save();
