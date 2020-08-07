@@ -33,6 +33,10 @@
 #content .helloharel .control-label {
     font-weight: 900;
 }
+
+#content .helloharel .btn {
+    text-transform: none;
+}
 </style>
 
 <div class="helloharel">
@@ -100,6 +104,7 @@
         
         <div class="text-right">
             <a class="btn btn-success" href=""><i class="icon-check"></i> {l s='It\'s done!' d='Modules.Helloharel.Admin'}</a>
+            <a class="btn btn-primary pull-left" href="https://www.helloharel.com/inscription" target="_blank"><i class="icon-external-link"></i> {l s='I don\'t have an instance yet!' d='Modules.Helloharel.Admin'}</a>
         </div>
     </div>
 </div>

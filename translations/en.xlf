@@ -162,9 +162,13 @@
                 <source>Unlink instance</source>
                 <target>Unlink instance</target>
             </trans-unit>
-            <trans-unit id="40">
+            <trans-unit id="41">
                 <source>Remove all references (products, orders and customers)</source>
                 <target>Remove all references (products, orders and customers)</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>I don't have an instance yet!</source>
+                <target>I don't have an instance yet!</target>
             </trans-unit>
         </body>
     </file>
