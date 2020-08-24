@@ -38,6 +38,7 @@ class HelloHarel extends Module
     
     public function __construct()
     {
+        $this->module_key = 'e00eec7741b0f9d09b4fb5eb432335c6';
         $this->name = 'helloharel';
         $this->tab = 'administration';
         $this->version = '1.0.6';
