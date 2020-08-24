@@ -15,6 +15,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  */
 
 namespace HelloHarel\Manager;
@@ -33,13 +37,13 @@ class ReferenceManager extends AbstractManager
             PRIMARY KEY (`id_reference`)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;';
 
-        if(!Db::getInstance()->execute($query)) {
+        if (!Db::getInstance()->execute($query)) {
             return 'Could not create reference table';
         }
-        if(!Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'orders CHANGE `reference` `reference` VARCHAR(255) DEFAULT NULL')) {
+        if (!Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'orders CHANGE `reference` `reference` VARCHAR(255) DEFAULT NULL')) {
             return 'Could not fix order reference size';
         }
-        if(!Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'order_payment CHANGE `order_reference` `order_reference` VARCHAR(255) DEFAULT NULL')) {
+        if (!Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'order_payment CHANGE `order_reference` `order_reference` VARCHAR(255) DEFAULT NULL')) {
             return 'Could not fix order reference size';
         }
         
@@ -48,7 +52,7 @@ class ReferenceManager extends AbstractManager
     
     public function dropReferences()
     {
-        if(!Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'helloharel_references`;')) {
+        if (!Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'helloharel_references`;')) {
             return 'Could not delete references';
         }
         return true;

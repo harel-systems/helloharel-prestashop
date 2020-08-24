@@ -10,5 +10,7 @@
   "type": "prestashop-module",
   "require": {
     "symfony/http-client": "^5.0"
+  },
+  "require-dev": {
   }
 }

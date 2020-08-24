@@ -15,6 +15,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  */
 
 namespace HelloHarel\Manager;
@@ -22,12 +26,85 @@ namespace HelloHarel\Manager;
 use Configuration;
 use HelloHarel\Entity\HelloHarelReference;
 use WebserviceKey;
+use Tools;
 
 class ConfigManager extends AbstractManager
 {
+    const PERMISSIONS = [
+        'addresses',
+        'carriers',
+        'cart_rules',
+        'carts',
+        'categories',
+        'combinations',
+        'configurations',
+        'contacts',
+        'content_management_system',
+        'countries',
+        'currencies',
+        'customer_messages',
+        'customer_threads',
+        'customers',
+        'customizations',
+        'deliveries',
+        'employees',
+        'groups',
+        'guests',
+        'helloharel',
+        'helloharel_references',
+        'image_types',
+        'images',
+        'languages',
+        'manufacturers',
+        'messages',
+        'order_carriers',
+        'order_details',
+        'order_histories',
+        'order_invoices',
+        'order_payments',
+        'order_slip',
+        'order_states',
+        'orders',
+        'price_ranges',
+        'product_customization_fields',
+        'product_feature_values',
+        'product_features',
+        'product_option_values',
+        'product_options',
+        'product_suppliers',
+        'products',
+        'search',
+        'shop_groups',
+        'shop_urls',
+        'shops',
+        'specific_price_rules',
+        'specific_prices',
+        'states',
+        'stock_availables',
+        'stock_movement_reasons',
+        'stock_movements',
+        'stocks',
+        'stores',
+        'suppliers',
+        'supply_order_details',
+        'supply_order_histories',
+        'supply_order_receipt_histories',
+        'supply_order_states',
+        'supply_orders',
+        'tags',
+        'tax_rule_groups',
+        'tax_rules',
+        'taxes',
+        'translated_configurations',
+        'warehouse_product_locations',
+        'warehouses',
+        'weight_ranges',
+        'zones',
+    ];
+    
     public function install()
     {
-        if(!Configuration::updateValue('PS_WEBSERVICE', 'true')) {
+        if (!Configuration::updateValue('PS_WEBSERVICE', 'true')) {
             return 'Could not activate web service';
         }
         return true;
@@ -43,7 +120,7 @@ class ConfigManager extends AbstractManager
     
     private function getApiKey()
     {
-        if($id = Configuration::get('HH_API_KEY')) {
+        if ($id = Configuration::get('HH_API_KEY')) {
             $apiKey = new WebserviceKey($id);
         } else {
             $apiKey = new WebserviceKey();
@@ -52,77 +129,10 @@ class ConfigManager extends AbstractManager
             $apiKey->save();
             Configuration::updateValue('HH_API_KEY', $apiKey->id);
             
-            $permissions = array(
-                'addresses' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'carriers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'cart_rules' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'carts' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'categories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'combinations' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'configurations' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'contacts' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'content_management_system' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'countries' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'currencies' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'customer_messages' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'customer_threads' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'customers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'customizations' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'deliveries' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'employees' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'groups' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'guests' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'helloharel' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'helloharel_references' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'image_types' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'images' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'languages' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'manufacturers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'messages' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'order_carriers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'order_details' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'order_histories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'order_invoices' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'order_payments' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'order_slip' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'order_states' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'orders' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'price_ranges' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'product_customization_fields' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'product_feature_values' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'product_features' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'product_option_values' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'product_options' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'product_suppliers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'products' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'search' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'shop_groups' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'shop_urls' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'shops' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'specific_price_rules' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'specific_prices' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'states' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'stock_availables' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'stock_movement_reasons' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'stock_movements' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'stocks' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'stores' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'suppliers' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'supply_order_details' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'supply_order_histories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'supply_order_receipt_histories' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'supply_order_states' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'supply_orders' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'tags' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'tax_rule_groups' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'tax_rules' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'taxes' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'translated_configurations' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'warehouse_product_locations' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'warehouses' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'weight_ranges' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-                'zones' => array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1),
-            );
+            $permissions = array();
+            foreach (self::PERMISSIONS as $permission) {
+                $permissions[$permission] = array('GET' => 1, 'POST' => 1, 'PUT' => 1, 'DELETE' => 1, 'HEAD' => 1);
+            }
             
             WebserviceKey::setPermissionForAccount($apiKey->id, $permissions);
         }
@@ -131,7 +141,7 @@ class ConfigManager extends AbstractManager
     
     private function deleteApiKey()
     {
-        if($apiKey = $this->getApiKey()) {
+        if ($apiKey = $this->getApiKey()) {
             $apiKey->delete();
             Configuration::updateValue('HH_API_KEY', null);
         }
@@ -144,14 +154,14 @@ class ConfigManager extends AbstractManager
         $action = array(
             'type' => null,
         );
-        if(isset($_POST['unlink_confirm']) || isset($_POST['unlink'])) {
+        if (Tools::getIsset('unlink_confirm') || Tools::getIsset('unlink')) {
             $action['type'] = 'unlink';
-            $action['confirmed'] = isset($_POST['unlink_confirm']);
-            $action['drop_references'] = isset($_POST['drop_references']);
-            if($action['confirmed']) {
+            $action['confirmed'] = Tools::getIsset('unlink_confirm');
+            $action['drop_references'] = Tools::getIsset('drop_references');
+            if ($action['confirmed']) {
                 $this->deleteApiKey();
                 $apiKey = $this->getApiKey();
-                if($action['drop_references']) {
+                if ($action['drop_references']) {
                     $this->app->getManager('reference')->dropReferences();
                 }
                 
@@ -159,15 +169,15 @@ class ConfigManager extends AbstractManager
                 $instanceUrl = null;
             }
         }
-        if(isset($_GET['extract_translations'])) {
+        if (Tools::getIsset('extract_translations')) {
             $action['type'] = 'translations';
             $action['content'] = (new TranslationManager($this->app))->extractTranslations();
         }
         
-        if($instanceUrl) {
+        if ($instanceUrl) {
             return $this->app->render('module:helloharel/views/templates/admin/config/config.tpl', array(
                 'action' => $action,
-                'post' => json_encode($_POST),
+                'post' => json_encode(Tools::getAllValues()),
                 'instanceUrl' => $instanceUrl,
                 'references' => array(
                     'products' => HelloHarelReference::countReferences('product'),
@@ -175,14 +185,12 @@ class ConfigManager extends AbstractManager
                     'orders' => HelloHarelReference::countReferences('order'),
                 ),
             ));
-        } else {
-            return $this->app->render('module:helloharel/views/templates/admin/config/wizard.tpl', array(
-                'action' => $action,
-                'prestashopUrl' => _PS_BASE_URL_ . __PS_BASE_URI__,
-                'apiKey' => $apiKey->key,
-            ));
         }
-
-        return $output;
+        
+        return $this->app->render('module:helloharel/views/templates/admin/config/wizard.tpl', array(
+            'action' => $action,
+            'prestashopUrl' => _PS_BASE_URL_ . __PS_BASE_URI__,
+            'apiKey' => $apiKey->key,
+        ));
     }
 }

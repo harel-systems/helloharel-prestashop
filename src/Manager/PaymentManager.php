@@ -15,6 +15,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  */
 
 namespace HelloHarel\Manager;
@@ -22,6 +26,7 @@ namespace HelloHarel\Manager;
 use Configuration;
 use Db;
 use Order;
+use Tools;
 
 class PaymentManager extends AbstractManager
 {
@@ -42,7 +47,7 @@ class PaymentManager extends AbstractManager
         
         $orders = Db::getInstance()->executeS('SELECT id_order FROM ' . _DB_PREFIX_ . 'orders WHERE reference = "' . (string)$payment->order_reference . '"');
         
-        if(!$orders || count($orders) !== 1) {
+        if (!$orders || count($orders) !== 1) {
             error_log('No single order found for payment with order reference ' . (string)$payment->order_reference);
             // No payment
             return;
@@ -56,7 +61,7 @@ class PaymentManager extends AbstractManager
                 'customer' => array(
                     'externalReference' => $order->id_customer,
                 ),
-                'date' => substr($payment->date_add, 0, 10),
+                'date' => Tools::substr($payment->date_add, 0, 10),
                 'amount' => $payment->amount,
                 'reference' => $payment->transaction_id,
                 'comment' => $payment->payment_method,
@@ -69,9 +74,7 @@ class PaymentManager extends AbstractManager
             ),
         ));
         
-        if($response->getStatusCode() === 200) {
-            $_payment = $response->toArray();
-        } else {
+        if ($response->getStatusCode() !== 200) {
             error_log('Payment could not be created on Hello Harel. Error code ' . $response->getStatusCode());
         }
     }

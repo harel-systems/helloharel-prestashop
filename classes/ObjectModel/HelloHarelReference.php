@@ -15,6 +15,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  */
 
 class HelloHarelReference extends \ObjectModel

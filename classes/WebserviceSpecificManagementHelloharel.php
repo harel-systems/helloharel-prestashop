@@ -15,6 +15,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  */
 
 class WebserviceSpecificManagementHelloharel implements WebserviceSpecificManagementInterface
@@ -61,13 +65,14 @@ class WebserviceSpecificManagementHelloharel implements WebserviceSpecificManage
     
     public function manage()
     {
-        switch($this->wsObject->method) {
+        switch ($this->wsObject->method) {
             case 'POST':
-                if(!isset($_POST['url']) || !isset($_POST['key'])) {
+                if (!Tools::getIsset('url') || !Tools::getIsset('key')) {
                     throw new WebserviceException('You have send values for the \'url\' and \'key\' fields', [100, 400]);
                 }
-                Configuration::updateValue('HH_INSTANCE_URL', $_POST['url']);
-                Configuration::updateValue('HH_INSTANCE_KEY', $_POST['key']);
+                Configuration::updateValue('HH_INSTANCE_URL', Tools::getValue('url'));
+                Configuration::updateValue('HH_INSTANCE_KEY', Tools::getValue('key'));
+                // NOTE POST and GET responses are the same
             case 'GET':
                 $this->objOutput->setHeaderParams('Content-Type', 'application/json');
                 
@@ -82,7 +87,6 @@ class WebserviceSpecificManagementHelloharel implements WebserviceSpecificManage
             default:
                 throw new WebserviceException('Method unsupported', [100, 400]);
         }
-        
     }
 
     /**

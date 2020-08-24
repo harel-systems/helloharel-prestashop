@@ -15,6 +15,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  */
 
 namespace HelloHarel\Manager;
@@ -39,8 +43,8 @@ class ProductManager extends AbstractManager
     public function adminListView(array $params)
     {
         $instanceUrl = Configuration::get('HH_INSTANCE_URL');
-        if($instanceUrl) {
-            switch(Context::getContext()->controller->php_self) {
+        if ($instanceUrl) {
+            switch (Context::getContext()->controller->php_self) {
                 case 'AdminProducts':
                     return "<script>
                     $(document).ready(function() {
@@ -63,7 +67,7 @@ class ProductManager extends AbstractManager
         $product = new Product($params['id_product']);
         $reference = HelloHarelReference::getHelloHarelId('product', $product->id);
         
-        if($instanceUrl && $reference !== null) {
+        if ($instanceUrl && $reference !== null) {
             return "
             <style>
                 #step1, #tab_step1,
@@ -104,7 +108,7 @@ class ProductManager extends AbstractManager
             </style>
             <script>
             $(document).ready(function() {
-                if($('#form-nav .nav-link.active:visible').length === 0) {
+                if ($('#form-nav .nav-link.active:visible').length === 0) {
                     $('#tab_step4 a').tab('show');
                 }
                 $('#form_step1_name_1').prop('readonly', true);

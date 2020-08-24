@@ -15,16 +15,20 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  */
 
-if(!defined('_PS_VERSION_')) {
+if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 use HelloHarel\Entity\HelloHarelReference;
 use HelloHarel\Manager;
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once dirname(__FILE__) . '/vendor/autoload.php';
 
 include_once(_PS_MODULE_DIR_ . 'helloharel/classes/WebserviceSpecificManagementHelloharel.php');
 
@@ -36,7 +40,7 @@ class HelloHarel extends Module
     {
         $this->name = 'helloharel';
         $this->tab = 'administration';
-        $this->version = '1.0.5';
+        $this->version = '1.0.6';
         $this->author = 'Harel Systems SAS';
         $this->need_instance = 0;
         
@@ -77,19 +81,19 @@ class HelloHarel extends Module
     
     public function install()
     {
-        if(!parent::install() || !$this->registerHook(['addWebserviceResources'])) {
+        if (!parent::install() || !$this->registerHook(['addWebserviceResources'])) {
             return false;
         }
-        foreach($this->managers as $key => $manager) {
-            foreach($manager::HOOKS as $hook => $method) {
+        foreach ($this->managers as $key => $manager) {
+            foreach ($manager::HOOKS as $hook => $method) {
                 error_log('[DEBUG] Registering hook ' . $hook . ' for ' . $key . ' manager');
-                if(!$this->registerHook($hook)) {
+                if (!$this->registerHook($hook)) {
                     $this->_errors[] = 'Could not register hook ' . $hook . ' for ' . $key . ' manager';
                     return false;
                 }
             }
             error_log('[DEBUG] Installing ' . $key . ' manager');
-            if(true !== $message = $manager->install()) {
+            if (true !== $message = $manager->install()) {
                 error_log('[DEBUG] ' . $key . ' manager install failed with message: ' . $message);
                 $this->_errors[] = $message;
                 return false;
@@ -100,12 +104,12 @@ class HelloHarel extends Module
     
     public function uninstall()
     {
-        if(!parent::uninstall() || !$this->registerHook(['addWebserviceResources'])) {
+        if (!parent::uninstall() || !$this->registerHook(['addWebserviceResources'])) {
             return false;
         }
-        foreach($this->managers as $key => $manager) {
+        foreach ($this->managers as $key => $manager) {
             error_log('[DEBUG] Uninstalling ' . $key . ' manager');
-            if(true !== $message = $manager->uninstall()) {
+            if (true !== $message = $manager->uninstall()) {
                 error_log('[DEBUG] ' . $key . ' manager uninstall failed with message: ' . $message);
                 $this->_errors[] = $message;
                 return false;
@@ -116,12 +120,12 @@ class HelloHarel extends Module
     
     public function __call($name, $arguments)
     {
-        if(!Validate::isHookName($name)) {
+        if (!Validate::isHookName($name)) {
             return false;
         }
-        $name = lcfirst(substr($name, 4));
-        foreach($this->managers as $id => $manager) {
-            if(isset($manager::HOOKS[$name])) {
+        $name = lcfirst(Tools::substr($name, 4));
+        foreach ($this->managers as $manager) {
+            if (array_key_exists($manager::HOOKS, $name)) {
                 return $manager->{$manager::HOOKS[$name]}(...$arguments);
             }
         }

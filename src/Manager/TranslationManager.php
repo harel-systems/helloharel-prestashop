@@ -15,6 +15,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  */
 
 namespace HelloHarel\Manager;
@@ -22,6 +26,7 @@ namespace HelloHarel\Manager;
 use Db;
 use DbQuery;
 use HelloHarel\Entity\HelloHarelReference;
+use Tools;
 
 class TranslationManager extends AbstractManager
 {
@@ -29,7 +34,7 @@ class TranslationManager extends AbstractManager
     
     public function install()
     {
-        if(!$this->extractTranslations()) {
+        if (!$this->extractTranslations()) {
             return 'Could not extract translations';
         }
         return true;
@@ -39,7 +44,7 @@ class TranslationManager extends AbstractManager
     {
         $content = [];
         
-        $directory = __DIR__ . '/../../translations';
+        $directory = dirname(__FILE__) . '/../../translations';
         $files = scandir($directory);
         
         Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'translation WHERE domain="'. pSQL(self::DOMAIN) . '"');
@@ -48,11 +53,11 @@ class TranslationManager extends AbstractManager
         $query->select('COALESCE(MAX(id_translation), 1)');
         $query->from('translation');
         
-        foreach($files as $i => $file) {
-            if(is_dir($file)) {
+        foreach ($files as $file) {
+            if (is_dir($file)) {
                 continue;
             }
-            $lang = substr($file, 0, strpos($file, '.'));
+            $lang = Tools::substr($file, 0, strpos($file, '.'));
             
             $query = new DbQuery();
             $query->select('id_lang');
@@ -60,12 +65,12 @@ class TranslationManager extends AbstractManager
             $query->where('language_code = "' . pSQL($lang) . '"');
             $langId = \Db::getInstance()->getValue($query);
             
-            if($langId) {
+            if ($langId) {
                 $content[] = '<tr class="success"><th colSpan=3>Extracting language <code>' . $lang . '</code> with ID ' . $langId . '</th></tr>';
-                if(false === $xmldata = simplexml_load_file($directory . '/' . $file)) {
+                if (false === $xmldata = simplexml_load_file($directory . '/' . $file)) {
                     return false;
                 }
-                foreach($xmldata->file->body->children() as $unit) {
+                foreach ($xmldata->file->body->children() as $unit) {
                     $result = Db::getInstance()->insert('translation', array(
                         'id_lang' => (int)$langId,
                         'key' => addslashes((string)$unit->source),

@@ -15,6 +15,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  */
 
 namespace HelloHarel\Manager;
@@ -41,16 +45,16 @@ class OrderManager extends AbstractManager
     
     public function install()
     {
-        if(!$this->disableModule('ps_customeraccountlinks')) {
+        if (!$this->disableModule('ps_customeraccountlinks')) {
             return 'Could not disable ps_customeraccountlinks module';
         }
         
-        if(!Configuration::updateValue('PS_ORDER_RETURN', '0')) {
+        if (!Configuration::updateValue('PS_ORDER_RETURN', '0')) {
             return 'Could not deactivate returns';
         }
         
         // Remove problematic properties of order states (invoice, delivery)
-        if(!Db::getInstance()->execute('UPDATE ' . _DB_PREFIX_ . 'order_state SET logable = false, delivery = false, shipped = false, invoice = false, pdf_invoice = false, pdf_delivery = false')) {
+        if (!Db::getInstance()->execute('UPDATE ' . _DB_PREFIX_ . 'order_state SET logable = false, delivery = false, shipped = false, invoice = false, pdf_invoice = false, pdf_delivery = false')) {
             return 'Could not fix order states';
         }
         
@@ -66,7 +70,7 @@ class OrderManager extends AbstractManager
         $paymentReceived->unremovable = 1;
         $paymentReceived->name = array();
         $languages = Language::getLanguages(false);
-        foreach($languages as $language) {
+        foreach ($languages as $language) {
             $paymentReceived->name[$language['id_lang']] = $this->trans('Payment received', array(), 'Modules.Helloharel.Admin');
         }
         $paymentReceived->add();
@@ -81,7 +85,7 @@ class OrderManager extends AbstractManager
         $orderValidated->unremovable = 1;
         $orderValidated->name = array();
         $languages = Language::getLanguages(false);
-        foreach($languages as $language) {
+        foreach ($languages as $language) {
             $orderValidated->name[$language['id_lang']] = $this->trans('Order validated', array(), 'Modules.Helloharel.Admin');
         }
         $orderValidated->add();
@@ -97,7 +101,7 @@ class OrderManager extends AbstractManager
         $shipped->unremovable = 1;
         $shipped->name = array();
         $languages = Language::getLanguages(false);
-        foreach($languages as $language) {
+        foreach ($languages as $language) {
             $shipped->name[$language['id_lang']] = $this->trans('Shipped', array(), 'Modules.Helloharel.Admin');
         }
         $shipped->add();
@@ -111,7 +115,7 @@ class OrderManager extends AbstractManager
         $delivered->unremovable = 1;
         $delivered->name = array();
         $languages = Language::getLanguages(false);
-        foreach($languages as $language) {
+        foreach ($languages as $language) {
             $delivered->name[$language['id_lang']] = $this->trans('Delivered', array(), 'Modules.Helloharel.Admin');
         }
         $delivered->add();
@@ -125,13 +129,13 @@ class OrderManager extends AbstractManager
         $cancelled->unremovable = 1;
         $cancelled->name = array();
         $languages = Language::getLanguages(false);
-        foreach($languages as $language) {
+        foreach ($languages as $language) {
             $cancelled->name[$language['id_lang']] = $this->trans('Cancelled', array(), 'Modules.Helloharel.Admin');
         }
         $cancelled->add();
         $orderStates['cancelled'] = $cancelled->id;
         
-        if(!Configuration::updateValue('HH_ORDER_STATES', json_encode($orderStates))) {
+        if (!Configuration::updateValue('HH_ORDER_STATES', json_encode($orderStates))) {
             return 'Could not set order states configuration';
         }
         
@@ -140,7 +144,7 @@ class OrderManager extends AbstractManager
     
     public function uninstall()
     {
-        if(!Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'order_state WHERE module_name = \'helloharel\'')) {
+        if (!Db::getInstance()->execute('DELETE FROM ' . _DB_PREFIX_ . 'order_state WHERE module_name = \'helloharel\'')) {
             return 'Could not delete custom order states';
         }
         return true;
@@ -170,8 +174,8 @@ class OrderManager extends AbstractManager
         $rows = Db::getInstance()->executeS('SELECT product_id, product_quantity, product_name, unit_price_tax_excl FROM ' . _DB_PREFIX_ . 'order_detail WHERE id_order = ' . (int)$order->id);
         
         $items = [];
-        foreach($rows as $row) {
-            if(!in_array($row['product_id'], $managedProducts)) {
+        foreach ($rows as $row) {
+            if (!in_array($row['product_id'], $managedProducts)) {
                 error_log($row['product_id'] . ' is not managed by hello harel. Managed products are: ' . implode(', ', $managedProducts));
                 continue;
             }
@@ -183,13 +187,13 @@ class OrderManager extends AbstractManager
             );
         }
         
-        if(count($rows) !== count($items)) {
+        if (count($rows) !== count($items)) {
             error_log($params['order']->id . ' was not created on Hello Harel because some products were not mapped.');
             return;
         }
         
         $expectedDeliveryDate = date('Y-m-d 00:00:00');
-        if(isset($order->ddw_order_date)) {
+        if (isset($order->ddw_order_date)) {
             $expectedDeliveryDate = $order->ddw_order_date;
         }
         
@@ -209,7 +213,7 @@ class OrderManager extends AbstractManager
         )[Configuration::get('PS_PRICE_ROUND_MODE')];
         
         $vouchers = [];
-        if($order->total_discounts_tax_incl) {
+        if ($order->total_discounts_tax_incl) {
             $vouchers[] = array(
                 'description' => $this->trans('PrestaShop voucher', array(), 'Modules.Helloharel.Admin'),
                 'taxedAmount' => $order->total_discounts_tax_incl,
@@ -260,20 +264,20 @@ class OrderManager extends AbstractManager
             ),
         ));
         
-        if($response->getStatusCode() === 200) {
+        if ($response->getStatusCode() === 200) {
             $_order = $response->toArray();
-            if($_order['code']) {
+            if ($_order['code']) {
                 $order->reference = $_order['code'];
             }
             $customerReference = HelloHarelReference::getHelloHarelId('customer', $customer->id);
-            if($customerReference === null) {
+            if ($customerReference === null) {
                 $customerReference = new HelloHarelReference();
                 $customerReference->object_type = 'customer';
                 $customerReference->ps_id = $customer->id;
                 $customerReference->hh_id = (string)$_order['contact']['id'];
                 $customerReference->save();
             }
-            if($_order['access_id']) {
+            if ($_order['access_id']) {
                 $orderReference = new HelloHarelReference();
                 $orderReference->object_type = 'order';
                 $orderReference->ps_id = $order->id;
@@ -298,7 +302,7 @@ class OrderManager extends AbstractManager
         
         $reference = HelloHarelReference::getHelloHarelId('order', $order->id);
         
-        if($instanceUrl && $reference !== null) {
+        if ($instanceUrl && $reference !== null) {
             return "
             <div class=\"alert alert-info\">
                 <a href=\"$instanceUrl/sales/orders/by_reference/ordering.prestashop/{$order->id}\" class=\"btn btn-primary pull-right\"><i class=\"material-icons\">edit</i> " . $this->trans('View on Hello Harel', array(), 'Modules.Helloharel.Admin') . "</a>
@@ -350,9 +354,9 @@ class OrderManager extends AbstractManager
         
         $reference = HelloHarelReference::getHelloHarelId('order', $params['order']->id);
         
-        $comments = CustomerThread::getCustomerMessagesOrder($params['order']->id_customer, $params['order']->id);
+        // $comments = CustomerThread::getCustomerMessagesOrder($params['order']->id_customer, $params['order']->id);
         
-        if($instanceUrl && $reference !== null) {
+        if ($instanceUrl && $reference !== null) {
             return "
             <a class=\"box\" style=\"display: block; text-align: center;\" href=\"$instanceUrl/public/invoice/$reference/download\">
                 <i class=\"material-icons\">cloud_download</i> " . $this->trans('Download your invoice', array(), 'Modules.Helloharel.Admin') . "
@@ -375,7 +379,7 @@ class OrderManager extends AbstractManager
     {
         $instanceUrl = Configuration::get('HH_INSTANCE_URL');
         
-        if($instanceUrl) {
+        if ($instanceUrl) {
             return "
             <style>
             #order-slips-link {

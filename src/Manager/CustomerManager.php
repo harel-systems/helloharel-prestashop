@@ -15,6 +15,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  */
 
 namespace HelloHarel\Manager;
@@ -41,7 +45,7 @@ class CustomerManager extends AbstractManager
         
         $reference = HelloHarelReference::getHelloHarelId('customer', $customer->id);
         
-        if($reference !== null) {
+        if ($reference !== null) {
             $response = $this->getHttpClient()->request('PATCH', $instanceUrl . '/api/v1/contact_references', array(
                 'json' => array(
                     'id' => $reference->hh_id,
@@ -52,9 +56,7 @@ class CustomerManager extends AbstractManager
                 ),
             ));
             
-            if($response->getStatusCode() === 200) {
-                $_payment = $response->toArray();
-            } else {
+            if ($response->getStatusCode() !== 200) {
                 error_log('Customer could not be updated on Hello Harel. Error code ' . $response->getStatusCode());
             }
         }

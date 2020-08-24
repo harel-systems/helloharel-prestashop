@@ -14,6 +14,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author      Maxime Corteel
+ * @copyright   Harel Systems SAS
+ * @license     http://opensource.org/licenses/AGPL-3.0 AGPL-3.0
  *}
 
 <style>
@@ -42,69 +46,69 @@
 <div class="helloharel">
     {if $action.type eq 'unlink'}
         <div class="alert alert-success">
-            {l s='Hello Harel and PrestaShop have been successfully unlinked!' d='Modules.Helloharel.Admin'}
+            {l s='Hello Harel and PrestaShop have been successfully unlinked!' d='Modules.Helloharel.Admin' mod='helloharel'}
         </div>
     {else}
         <div class="alert alert-info">
-            {l s='You are only one last step away from integrating Hello Harel with PrestaShop!' d='Modules.Helloharel.Admin'}
+            {l s='You are only one last step away from integrating Hello Harel with PrestaShop!' d='Modules.Helloharel.Admin' mod='helloharel'}
         </div>
     {/if}
 
     <div class="well">
-        <p>{l s='To activate the integration:' d='Modules.Helloharel.Admin'}</p>
+        <p>{l s='To activate the integration:' d='Modules.Helloharel.Admin' mod='helloharel'}</p>
         <ol>
             <li>
-                {l s='Go to your Hello Harel instance and navigate to:' d='Modules.Helloharel.Admin'}
+                {l s='Go to your Hello Harel instance and navigate to:' d='Modules.Helloharel.Admin' mod='helloharel'}
                 <ol class="breadcrumb">
-                    <li>{l s='Administration' d='Modules.Helloharel.Admin'}</li>
-                    <li>{l s='External applications' d='Modules.Helloharel.Admin'}</li>
+                    <li>{l s='Administration' d='Modules.Helloharel.Admin' mod='helloharel'}</li>
+                    <li>{l s='External applications' d='Modules.Helloharel.Admin' mod='helloharel'}</li>
                 </ol>
             </li>
             
-            <li>{l s='Open the PrestaShop app from the list' d='Modules.Helloharel.Admin'}</li>
+            <li>{l s='Open the PrestaShop app from the list' d='Modules.Helloharel.Admin' mod='helloharel'}</li>
             
-            <li>{l s='Click the "Activate app" button' d='Modules.Helloharel.Admin'}</li>
+            <li>{l s='Click the "Activate app" button' d='Modules.Helloharel.Admin' mod='helloharel'}</li>
             
-            <li>{l s='Go to the "App settings" tab from the PrestaShop modal' d='Modules.Helloharel.Admin'}</li>
+            <li>{l s='Go to the "App settings" tab from the PrestaShop modal' d='Modules.Helloharel.Admin' mod='helloharel'}</li>
             
             <li>
-                {l s='And copy the following information in the form:' d='Modules.Helloharel.Admin'}
+                {l s='And copy the following information in the form:' d='Modules.Helloharel.Admin' mod='helloharel'}
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <label class="control-label col-md-3">{l s='PrestaShop URL' d='Modules.Helloharel.Admin'}</label>
+                        <label class="control-label col-md-3">{l s='PrestaShop URL' d='Modules.Helloharel.Admin' mod='helloharel'}</label>
                         <div class="controls col-md-6">
                             <div class="input-group">
                                 <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default copy-to-clipboard" title="{l s='Copy to clipboard' d='Modules.Helloharel.Admin'}">
+                                    <button type="button" class="btn btn-default copy-to-clipboard" title="{l s='Copy to clipboard' d='Modules.Helloharel.Admin' mod='helloharel'}">
                                         <i class="icon-copy"></i>
                                     </button>
                                 </span>
-                                <input type="text" readonly class="form-control" value="{$prestashopUrl}" />
+                                <input type="text" readonly class="form-control" value="{$prestashopUrl|escape:'htmlall':'UTF-8'}" />
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-3">{l s='API key' d='Modules.Helloharel.Admin'}</label>
+                        <label class="control-label col-md-3">{l s='API key' d='Modules.Helloharel.Admin' mod='helloharel'}</label>
                         <div class="controls col-md-6">
                             <div class="input-group">
                                 <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default copy-to-clipboard" title="{l s='Copy to clipboard' d='Modules.Helloharel.Admin'}">
+                                    <button type="button" class="btn btn-default copy-to-clipboard" title="{l s='Copy to clipboard' d='Modules.Helloharel.Admin' mod='helloharel'}">
                                         <i class="icon-copy"></i>
                                     </button>
                                 </span>
-                                <input type="text" readonly class="form-control" value="{$apiKey}" />
+                                <input type="text" readonly class="form-control" value="{$apiKey|escape:'htmlall':'UTF-8'}" />
                             </div>
                         </div>
                     </div>
                 </div>
             </li>
             
-            <li>{l s='Click the "Save options" button.' d='Modules.Helloharel.Admin'}</li>
+            <li>{l s='Click the "Save options" button.' d='Modules.Helloharel.Admin' mod='helloharel'}</li>
         </ol>
         
         <div class="text-right">
-            <a class="btn btn-success" href=""><i class="icon-check"></i> {l s='It\'s done!' d='Modules.Helloharel.Admin'}</a>
-            <a class="btn btn-primary pull-left" href="https://www.helloharel.com/inscription" target="_blank"><i class="icon-external-link"></i> {l s='I don\'t have an instance yet!' d='Modules.Helloharel.Admin'}</a>
+            <a class="btn btn-success" href=""><i class="icon-check"></i> {l s='It\'s done!' d='Modules.Helloharel.Admin' mod='helloharel'}</a>
+            <a class="btn btn-primary pull-left" href="https://www.helloharel.com/inscription" target="_blank"><i class="icon-external-link"></i> {l s='I don\'t have an instance yet!' d='Modules.Helloharel.Admin' mod='helloharel'}</a>
         </div>
     </div>
 </div>
