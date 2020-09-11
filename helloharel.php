@@ -126,7 +126,7 @@ class HelloHarel extends Module
         }
         $name = lcfirst(Tools::substr($name, 4));
         foreach ($this->managers as $manager) {
-            if (array_key_exists($manager::HOOKS, $name)) {
+            if (array_key_exists($name, $manager::HOOKS)) {
                 return $manager->{$manager::HOOKS[$name]}(...$arguments);
             }
         }
