@@ -41,7 +41,7 @@ class HelloHarel extends Module
         $this->module_key = 'e00eec7741b0f9d09b4fb5eb432335c6';
         $this->name = 'helloharel';
         $this->tab = 'administration';
-        $this->version = '1.0.6';
+        $this->version = '1.0.7';
         $this->author = 'Harel Systems SAS';
         $this->need_instance = 0;
         
